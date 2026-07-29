@@ -1,17 +1,7 @@
 import streamlit as st
-import re
 
-# --- EKRAN AYARLARI (Mobil Görünüm) ---
+# --- EKRAN AYARLARI ---
 st.set_page_config(page_title="ScalpAI - Kepek & INCI Analizi", page_icon="🧬", layout="centered")
-
-# Custom CSS ile mobil uygulama hissi veriyoruz
-st.markdown("""
-    <style>
-    .stApp { background-color: #F8FAFC; }
-    .main-card { background-color: #FFFFFF; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-    .score-badge { font-size: 24px; font-weight: bold; color: #10B981; text-align: center; }
-    </style>
-""", unsafe_allow_html=True)
 
 # --- INCI VERİ TABANI ---
 INCI_DATABASE = {
@@ -20,17 +10,17 @@ INCI_DATABASE = {
     "niacinamide": {"type": "Sebum Dengeleyici", "action": "Yağ üretimini düzenler", "score": 4},
     "menthol": {"type": "Ferahlatıcı", "action": "Kaşıntıyı anında baskılar", "score": 3},
     "glycerin": {"type": "Nemlendirici", "action": "Derinin nem dengesini korur", "score": 4},
-    "sodium lauryl sulfate": {"type": "Sert Sürfaktan", "action": "Aşırı kurutma riski taşıtır", "score": -2}
+    "sodium lauryl sulfate": {"type": "Sert Sürfaktan", "action": "Aşırı kurutma riski taşır", "score": -2}
 }
 
 st.title("🧬 ScalpAI® Mobile")
-st.caption("Yapay Zeka Destekli Kepek & Şampuan Etiket Taraması")
+st.write("Yapay Zeka Destekli Kepek & Şampuan Etiket Taraması")
 
-# --- TAB'LAR (EKRANLAR) ---
+# --- TAB'LAR ---
 tab1, tab2 = st.tabs(["📸 Şampuan Etiketi Tara", "📋 Kafa Derisi Teşhisi"])
 
 with tab1:
-    st.subheader("🔍 Şampuan INCI Taraması")
+    st.header("🔍 Şampuan INCI Taraması")
     st.write("Şampuanının arka yüzündeki **'İçindekiler / Ingredients'** bölümünün fotoğrafını çek.")
     
     # Telefon kamerasını açan bileşen
@@ -39,8 +29,7 @@ with tab1:
     if camera_image:
         st.success("Görsel yakalandı! OCR analizi yapılıyor...")
         
-        # Simüle Edilen OCR Metni (İleride buraya Tesseract/Google Vision bağlanacak)
-        # Clear Men örneğimizdeki aktif maddeler
+        # Simüle Edilen OCR Metni
         mock_ocr_text = "Aqua, Sodium Laureth Sulfate, Menthol, Piroctone Olamine, Niacinamide, Glycerin"
         
         found_actives = []
@@ -53,22 +42,22 @@ with tab1:
                 
         score = max(0, min(100, score))
         
-        # --- UYUM RAPORU EKRANI ---
-        st.markdown("---")
-        st.markdown(f"<div class='score-badge'>Ürün Uyum Skoru: %{score} ✅</div>", unsafe_allow_html=True)
+        # --- UYUM RAPORU ---
+        st.divider()
+        st.metric(label="Ürün Uyum Skoru", value=f"%{score}")
         st.progress(score / 100)
         
-        st.write("### 🧪 TESPİT EDİLEN ETKEN MADDELER:")
+        st.subheader("🧪 TESPİT EDİLEN ETKEN MADDELER:")
         for ing, typ, act in found_actives:
             st.info(f"**{ing}** ({typ}): {act}")
             
         if score >= 70:
-            st.success("💡 **AI Kararı:** Bu şampuan 'Yağlı/Mantar Kaynaklı Kepek' durumunuz için uygundur!")
+            st.success("💡 **AI Kararı:** Bu şampuan kafa derisi durumunuz için uygundur!")
         else:
             st.warning("💡 **AI Kararı:** Bu ürün kafa derinizin ihtiyacını tam karşılamıyor.")
 
 with tab2:
-    st.subheader("📋 Kafa Derisi Durum Analizi")
+    st.header("📋 Kafa Derisi Durum Analizi")
     st.write("Mevcut kafa derisi parametrelerini girin:")
     
     flake_size = st.slider("Pul Boyutu (mm)", 0.5, 5.0, 2.5)
