@@ -5,7 +5,7 @@ from PIL import Image, ImageOps, ImageFilter
 import io
 from sklearn.ensemble import RandomForestClassifier
 
-# --- PWA (ÇEVRİMDIŞI ÇALIŞMA) VE SAYFA YAPilandirmasi ---
+# --- SAYFA YAPILANDIRMASI ---
 st.set_page_config(
     page_title="ScalpAI - Advanced Clinical Suite", 
     page_icon="🧬", 
@@ -13,7 +13,75 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Tarayıcıya uygulamanın çevrimdışı (PWA) kurulabilmesini söyleyen manifest enjeksiyonu
+# --- MODERN VE CANLI UI İÇİN ÖZEL CSS (GELİŞMİŞ TASARIM) ---
+st.markdown("""
+<style>
+    /* Genel Arka Plan ve Tipografi */
+    .stApp {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    /* Ana Başlık Canlı Gradyan */
+    .main-title {
+        background: linear-gradient(90deg, #0284c7 0%, #0d9488 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+        font-size: 2.3rem;
+        margin-bottom: 0rem;
+    }
+    
+    /* Sekme (Tabs) Tasarımı */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+        background-color: #ffffff;
+        padding: 10px;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 48px;
+        background-color: transparent;
+        border-radius: 10px;
+        font-weight: 600;
+        color: #64748b;
+        padding: 0 20px;
+    }
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+    }
+
+    /* Buton Tasarımları */
+    div.stButton > button {
+        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+        color: white;
+        font-weight: 600;
+        border: none;
+        border-radius: 12px;
+        padding: 0.6rem 1.5rem;
+        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+        transition: all 0.3s ease;
+    }
+    div.stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45);
+    }
+
+    /* Metrik Kutuları */
+    div[data-testid="metric-container"] {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        padding: 16px;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# PWA Manifest Enjeksiyonu
 st.markdown("""
     <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
         'name': 'ScalpAI Otonom Sistem',
@@ -130,8 +198,8 @@ translations = {
 }
 
 # --- YAN MENÜ DİL SEÇİMİ VE PWA BİLGİSİ ---
-st.sidebar.markdown("### 🌐 Dil / Language / भाषा / 语言")
-selected_lang = st.sidebar.selectbox("Select Language", ["Türkçe", "English", "हिन्दी (Hindi)", "中文 (Chinese)"])
+st.sidebar.markdown("### 🌐 Dil / Language")
+selected_lang = st.sidebar.selectbox("Select Language", ["Türkçe", "English", "हिन्दी (Hindi)", "中文 (Chinese)"], label_visibility="collapsed")
 t = translations[selected_lang]
 
 st.sidebar.divider()
@@ -156,31 +224,22 @@ def train_ai_model():
 ai_classifier = train_ai_model()
 
 def computer_vision_scalp_analysis(img):
-    """
-    Bilgisayarlı Görü (Computer Vision) Algoritmaları:
-    Görüntüyü griye çevirip kenar tespiti (Edge Detection) ve renk kanal matris analizi yapar.
-    """
-    # Görüntüyü analiz için optimize et
     img_cv = img.resize((224, 224))
     img_np = np.array(img_cv)
     
-    # 1. Bilgisayarlı Görü Renk Kanalı (RGB) Eritem Analizi
     r_channel = img_np[:, :, 0].astype(float)
     g_channel = img_np[:, :, 1].astype(float)
     redness_raw = np.mean(r_channel - g_channel)
     redness_score = float(np.clip(redness_raw / 3.0, 0.0, 10.0))
     
-    # 2. Bilgisayarlı Görü Kenar ve Doku Pürüzlülüğü (Edge & Texture Variance via PIL Filters)
     gray_img = ImageOps.grayscale(img_cv)
     edges = gray_img.filter(ImageFilter.FIND_EDGES)
     edges_np = np.array(edges)
     texture_variance = float(np.std(edges_np) / 25.0)
     
-    # 3. Sebum / Parlaklık Yoğunluğu
     brightness = np.mean(img_np)
     sebum_index = float(np.clip((brightness - 90) / 60, 0.0, 1.0))
     
-    # Yapay Zeka Sınıflandırıcıya Gönderim
     features = np.array([[redness_score, sebum_index, texture_variance]])
     prediction = ai_classifier.predict(features)[0]
     
@@ -214,13 +273,15 @@ def generate_pdf_report(condition, redness, sebum, prescription):
     buffer.seek(0)
     return buffer.getvalue()
 
-st.title(t["title"])
-st.write(t["subtitle"])
+# --- ANA EKRAN GÖRSEL DÜZENİ ---
+st.markdown(f"<h1 class='main-title'>{t['title']}</h1>", unsafe_allow_html=True)
+st.write(f"*{t['subtitle']}*")
+st.divider()
 
 tab1, tab2, tab3 = st.tabs([t["tab1"], t["tab2"], t["tab3"]])
 
 with tab1:
-    st.header(t["cam_header"])
+    st.subheader(t["cam_header"])
     st.info(t["cam_info"])
     
     scalp_photo = st.camera_input(t["take_photo"])
@@ -232,16 +293,16 @@ with tab1:
         redness_score, sebum_index, condition, severity, prescription = computer_vision_scalp_analysis(img)
         st.session_state.history.append({"redness": redness_score, "sebum": sebum_index * 100, "condition": condition})
         
-        st.subheader(t["metrics_header"])
+        st.markdown(f"### {t['metrics_header']}")
         col1, col2 = st.columns(2)
         col1.metric(t["redness"], f"{redness_score:.1f} / 10.0")
         col2.metric(t["sebum"], f"%{int(sebum_index * 100)}")
         
         st.divider()
         st.subheader(t["report_header"])
-        st.markdown(f"**{t['condition']}:** {condition}")
+        st.markdown(f"**{t['condition']}:** `{condition}`")
         st.markdown(f"**{t['severity']}:** `{severity}`")
-        st.info(f"{t['prescription']}\n\n{prescription}")
+        st.info(f"**{t['prescription']}**\n\n{prescription}")
         
         pdf_bytes = generate_pdf_report(condition, redness_score, sebum_index, prescription)
         st.download_button(
@@ -252,7 +313,7 @@ with tab1:
         )
 
 with tab2:
-    st.header(t["tracker_header"])
+    st.subheader(t["tracker_header"])
     st.write(t["tracker_info"])
     
     if len(st.session_state.history) > 0:
@@ -275,7 +336,7 @@ with tab2:
         st.info("Henüz analiz kaydı bulunmuyor. 'Bilgisayarlı Görü Tarama' sekmesinden ilk taramanızı gerçekleştirebilirsiniz.")
 
 with tab3:
-    st.header(t["inci_header"])
+    st.subheader(t["inci_header"])
     st.write(t["inci_desc"])
     ingredients_input = st.text_area("Ingredients:", placeholder="Aqua, Sodium Laureth Sulfate, Piroctone Olamine...")
     
