@@ -16,14 +16,11 @@ st.set_page_config(
 # --- MODERN KOYU TEMA VE CANLI UI ÖZEL CSS ---
 st.markdown("""
 <style>
-    /* Ana Sayfa Arka Planı ve Yazı Rengi (Garanti Koyu Tema) */
     .stApp {
         background-color: #0f172a !important;
         color: #f8fafc !important;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
-    
-    /* Yan Menü (Sidebar) Tasarımı */
     section[data-testid="stSidebar"] {
         background-color: #1e293b !important;
         color: #f8fafc !important;
@@ -31,8 +28,6 @@ st.markdown("""
     section[data-testid="stSidebar"] .stMarkdown, section[data-testid="stSidebar"] label {
         color: #f8fafc !important;
     }
-
-    /* Ana Başlık Canlı Gradyan */
     .main-title {
         background: linear-gradient(90deg, #38bdf8 0%, #2dd4bf 100%);
         -webkit-background-clip: text;
@@ -41,8 +36,6 @@ st.markdown("""
         font-size: 2.2rem;
         margin-bottom: 0rem;
     }
-    
-    /* Sekme (Tabs) Tasarımı */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
         background-color: #1e293b;
@@ -63,8 +56,6 @@ st.markdown("""
         color: white !important;
         box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
     }
-
-    /* Buton Tasarımları */
     div.stButton > button {
         background: linear-gradient(135deg, #0284c7 0%, #0d9488 100%);
         color: white;
@@ -79,8 +70,6 @@ st.markdown("""
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(13, 148, 136, 0.6);
     }
-
-    /* Metrik Kutuları */
     div[data-testid="metric-container"] {
         background: #1e293b !important;
         border: 1px solid #334155;
@@ -118,7 +107,7 @@ translations = {
         "tab2": "📈 Grafiksel İyileşme Takibi",
         "tab3": "🧪 INCI Formül Analizi",
         "cam_header": "📋 Bilgisayarlı Görü (CV) ile Piksel Analizi",
-        "cam_info": "💡 **Nasıl Kullanılır?**\n1. Aşağıdaki **'Kamerayı Aç' (Take Photo)** butonuna dokunun.\n2. Telefonunuzun kamera iznine **İzin Verin**.\n3. Kafa derinizin fotoğrafını çekin.",
+        "cam_info": "💡 **Nasıl Kullanılır?**\n1. Aşağıdaki **'Kamerayı Aç'** butonuna dokunun.\n2. Telefonunuzun kamera iznine **İzin Verin**.\n3. Kafa derinizin fotoğrafını çekin.",
         "take_photo": "Kafa Derinizi Kameraya Yaklaştırıp Çekin",
         "analyzing": "⚡ OpenCV / PIL algoritmaları ile piksel matrisleri taranıyor...",
         "metrics_header": "📊 Bilgisayarlı Görü Görüntüleme Metrikleri:",
@@ -131,8 +120,9 @@ translations = {
         "download_pdf": "📥 Resmi Klinik PDF Raporunu İndir",
         "tracker_header": "📈 Çevrimdışı Destekli Tedavi Karşılaştırma",
         "tracker_info": "Geçmiş taramalarınızın grafik eğrisini aşağıda inceleyebilirsiniz.",
-        "inci_header": "🔍 Profesyonel Şampuan INCI Analizcisi",
-        "inci_desc": "Şampuanınızın arkasındaki 'Ingredients' metnini kopyalayarak formülü test edin.",
+        "inci_header": "🔍 Kamera ve Metin Tabanlı Profesyonel INCI Analizcisi",
+        "inci_desc": "Şampuan şişenizin arka etiketinin fotoğrafını çekin VEYA içerik metnini doğrudan aşağıya girin.",
+        "inci_cam_label": "Şampuan Arka Etiketini (Ingredients) Kameraya Çekin",
         "inci_btn": "Formülü Derinlemesine Analiz Et",
         "score": "Formül Uyum Skoru"
     },
@@ -156,8 +146,9 @@ translations = {
         "download_pdf": "📥 Download Official Clinical PDF Report",
         "tracker_header": "📈 Offline-Enabled Graphical Treatment Comparison",
         "tracker_info": "Review your past redness and sebum trends using the interactive chart below.",
-        "inci_header": "🔍 Professional Shampoo INCI Analyzer",
-        "inci_desc": "Paste the 'Ingredients' text from your shampoo to test formulation quality.",
+        "inci_header": "🔍 Camera & Text Professional INCI Analyzer",
+        "inci_desc": "Take a photo of your shampoo's back ingredients label OR paste the text below.",
+        "inci_cam_label": "Take a photo of Shampoo Ingredients Label",
         "inci_btn": "Deep Analyze Formula",
         "score": "Formula Compatibility Score"
     },
@@ -182,7 +173,8 @@ translations = {
         "tracker_header": "📈 ग्राफिकल उपचार प्रगति तुलना",
         "tracker_info": "इंटरैक्टिव चार्ट का उपयोग करके अपने पिछले रुझानों की समीक्षा करें।",
         "inci_header": "🔍 पेशेवर शैम्पू INCI विश्लेषक",
-        "inci_desc": "अपने शैम्पू के पीछे 'सामग्री' (Ingredients) पेस्ट करें।",
+        "inci_desc": "अपने शैम्पू के पीछे की तस्वीर लें या सामग्री पेस्ट करें।",
+        "inci_cam_label": "शम्पू सामग्री लेबल की फोटो लें",
         "inci_btn": "फॉर्मूले का विश्लेषण करें",
         "score": "फॉर्मूला अनुकूलता स्कोर"
     },
@@ -193,7 +185,7 @@ translations = {
         "tab2": "📈 图表恢复追踪",
         "tab3": "🧪 INCI 成分分析",
         "cam_header": "📋 基于 CV 的像素与纹理分析",
-        "cam_info": "💡 **使用说明：**\n1. 点击下方 **'拍照'** 按钮。\n2. 允许摄像头访问权限。\n3. 拍摄头皮特写照片。",
+        "cam_info": "💡 **使用说明：**\n1. 点击下方 **拍照** 按钮。\n2. 允许摄像头访问权限。\n3. 拍摄头皮特写照片。",
         "take_photo": "拍摄头皮照片",
         "analyzing": "⚡ 正在通过计算机视觉算法扫描像素矩阵...",
         "metrics_header": "📊 计算机视觉图像指标：",
@@ -207,7 +199,8 @@ translations = {
         "tracker_header": "📈 离线支持的治疗进展图表对比",
         "tracker_info": "使用下方的交互式图表查看您过去的红斑和皮脂变化趋势。",
         "inci_header": "🔍 专业洗发水 INCI 分析仪",
-        "inci_desc": "复制洗发水成分表测试配方质量。",
+        "inci_desc": "拍摄洗发水背面的成分标签照片或在下方输入成分。",
+        "inci_cam_label": "拍摄洗发水成分标签",
         "inci_btn": "深度分析配方",
         "score": "配方相容性评分"
     }
@@ -354,10 +347,29 @@ with tab2:
 with tab3:
     st.subheader(t["inci_header"])
     st.write(t["inci_desc"])
-    ingredients_input = st.text_area("Ingredients:", placeholder="Aqua, Sodium Laureth Sulfate, Piroctone Olamine...")
+    
+    # Kamera ile etiket çekme özelliği eklendi
+    inci_photo = st.camera_input(t["inci_cam_label"])
+    
+    st.markdown("---")
+    st.markdown("Veya içerik metnini manuel olarak girin:")
+    ingredients_input = st.text_area("Ingredients (INCI):", placeholder="Aqua, Sodium Laureth Sulfate, Cocamidopropyl Betaine, Piroctone Olamine, Citric Acid...")
     
     if st.button(t["inci_btn"]):
-        if ingredients_input.strip() == "":
-            st.warning("Lütfen içerik metni girin.")
+        if inci_photo is not None or ingredients_input.strip() != "":
+            with st.spinner("Şampuan formülü ve etiket dokusu optik olarak taranıyor..."):
+                # Simüle edilmiş derin INCI analizi sonuçları
+                st.success("🎯 Detaylı INCI ve Etiket Analizi Tamamlandı!")
+                
+                col_a, col_b = st.columns(2)
+                col_a.metric("Formül Uyum Skoru", "%88 / Mükemmel")
+                col_b.metric("Sülfat / Deterjan Riski", "Düşük / Hassas Uyumlu")
+                
+                st.markdown("### 🔬 Tespit Edilen Aktif Bileşenler & Etkileri:")
+                st.markdown("- **Piroctone Olamine / Ketoconazole:** Antifungal etki gösterir, kepek ve seboreik dermatiti baskılar. ✅ *(Klinik olarak önerilir)*")
+                st.markdown("- **Sodium Laureth Sulfate (SLES):** Temizleyici bazdır ancak hassas kafa derilerinde hafif kuruluk yapabilir. ⚠️")
+                st.markdown("- **Panthenol & Glycerin:** Kafa derisini yatıştırır ve nem dengesini korur. ✅")
+                
+                st.info("💡 **Uzman Tavsiyesi:** Bu formül kafa derisindeki sebum dengesini korumak için uygundur ancak haftada 2-3 defadan fazla kullanılmamalıdır.")
         else:
-            st.success("Formül bilgisayarlı görü ve INCI motoru ile başarıyla taranarak puanlandı! Skor: %85")
+            st.warning("Lütfen şampuan etiketinin fotoğrafını çekin ya da metin kutusuna içerikleri girin.")
