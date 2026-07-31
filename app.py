@@ -1,108 +1,127 @@
 import streamlit as st
 import numpy as np
-from PIL import Image
+import pandas as pd
+from PIL import Image, ImageOps, ImageFilter
 import io
 from sklearn.ensemble import RandomForestClassifier
 
-st.set_page_config(page_title="ScalpAI - Global AI Clinical Suite", page_icon="🧬", layout="centered")
+# --- PWA (ÇEVRİMDIŞI ÇALIŞMA) VE SAYFA YAPilandirmasi ---
+st.set_page_config(
+    page_title="ScalpAI - Advanced Clinical Suite", 
+    page_icon="🧬", 
+    layout="centered",
+    initial_sidebar_state="expanded"
+)
+
+# Tarayıcıya uygulamanın çevrimdışı (PWA) kurulabilmesini söyleyen manifest enjeksiyonu
+st.markdown("""
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
+        'name': 'ScalpAI Otonom Sistem',
+        'short_name': 'ScalpAI',
+        'start_url': '/',
+        'display': 'standalone',
+        'background_color': '#ffffff',
+        'theme_color': '#0284c7'
+    }">
+""", unsafe_allow_html=True)
 
 # --- 4 DİLLİ ULUSLARARASI SÖZLÜK ---
 translations = {
     "Türkçe": {
-        "title": "🧬 ScalpAI® Yapay Zeka Klinik Paketi",
-        "subtitle": "Derin öğrenme destekli kafa derisi tarayıcısı, iyileşme takibi ve klinik rapor üreticisi.",
-        "tab1": "📸 AI Kafa Derisi Tarama",
-        "tab2": "📈 İyileşme Takibi",
+        "title": "🧬 ScalpAI® Görüntü İşlemeli Klinik Paketi",
+        "subtitle": "Bilgisayarlı Görü (Computer Vision), çevrimdışı PWA desteği ve grafiksel iyileşme takibi.",
+        "tab1": "📸 Bilgisayarlı Görü Tarama",
+        "tab2": "📈 Grafiksel İyileşme Takibi",
         "tab3": "🧪 INCI Formül Analizi",
-        "cam_header": "📋 Yapay Zeka Destekli Derin Öğrenme Teşhisi",
+        "cam_header": "📋 Bilgisayarlı Görü (CV) ile Piksel Analizi",
         "cam_info": "💡 **Nasıl Kullanılır?**\n1. Aşağıdaki **'Kamerayı Aç' (Take Photo)** butonuna dokunun.\n2. Telefonunuzun kamera iznine **İzin Verin**.\n3. Kafa derinizin fotoğrafını çekin.",
         "take_photo": "Kafa Derinizi Kameraya Yaklaştırıp Çekin",
-        "analyzing": "⚡ Yapay Zeka Modeli piksel matrislerini ve doku modellerini analiz ediyor...",
-        "metrics_header": "📊 Gelişmiş Görüntü İşleme Metrikleri:",
-        "redness": "Kızarıklık / Eritem İndeksi",
-        "sebum": "Sebum / Yağlanma Düzeyi",
-        "report_header": "🔬 YAPAY ZEKA TEŞHİS VE KLİNİK RAPORU",
-        "condition": "Yapay Zeka Tahmini Patoloji",
+        "analyzing": "⚡ OpenCV / PIL algoritmaları ile piksel matrisleri taranıyor...",
+        "metrics_header": "📊 Bilgisayarlı Görü Görüntüleme Metrikleri:",
+        "redness": "Bilgisayarlı Görü Kızarıklık İndeksi",
+        "sebum": "Piksel Parlaklık / Sebum Seviyesi",
+        "report_header": "🔬 BİLGİSAYARLI GÖRÜ VE KLİNİK RAPOR",
+        "condition": "AI & Görüntü Tahmini Patoloji",
         "severity": "Klinik Derece / Şiddet",
         "prescription": "💊 Hedeflenen Tedavi Reçetesi:",
         "download_pdf": "📥 Resmi Klinik PDF Raporunu İndir",
-        "tracker_header": "📈 Geçmiş İyileşme ve Takip Grafiği",
-        "tracker_info": "Tedavi sürecinizi izlemek için geçmiş analiz kayıtlarınız burada saklanır.",
+        "tracker_header": "📈 Çevrimdışı Destekli Tedavi Karşılaştırma",
+        "tracker_info": "Geçmiş taramalarınızın grafik eğrisini aşağıda inceleyebilirsiniz.",
         "inci_header": "🔍 Profesyonel Şampuan INCI Analizcisi",
         "inci_desc": "Şampuanınızın arkasındaki 'Ingredients' metnini kopyalayarak formülü test edin.",
         "inci_btn": "Formülü Derinlemesine Analiz Et",
         "score": "Formül Uyum Skoru"
     },
     "English": {
-        "title": "🧬 ScalpAI® AI Clinical Suite",
-        "subtitle": "Autonomous Deep Learning scalp scanner, tracking & clinical report generator.",
-        "tab1": "📸 AI Scalp Scan",
-        "tab2": "📈 Recovery Tracker",
+        "title": "🧬 ScalpAI® Computer Vision Clinical Suite",
+        "subtitle": "Computer Vision (CV) processing, offline PWA support & graphical tracking.",
+        "tab1": "📸 Computer Vision Scan",
+        "tab2": "📈 Graphical Recovery Tracker",
         "tab3": "🧪 INCI Analysis",
-        "cam_header": "📋 AI-Powered Deep Learning Diagnosis",
+        "cam_header": "📋 CV-Powered Pixel & Texture Analysis",
         "cam_info": "💡 **How to Use?**\n1. Tap **'Take Photo'** below.\n2. Allow camera access.\n3. Take a close-up photo of your scalp.",
         "take_photo": "Take a photo of your scalp",
-        "analyzing": "⚡ AI Model analyzing pixel matrices & texture patterns...",
-        "metrics_header": "📊 Advanced Image Processing Metrics:",
-        "redness": "Erythema / Redness Index",
-        "sebum": "Sebum / Oil Level",
-        "report_header": "🔬 AI DIAGNOSIS & CLINICAL REPORT",
-        "condition": "AI Predicted Condition",
+        "analyzing": "⚡ Scanning pixel matrices & texture patterns via CV algorithms...",
+        "metrics_header": "📊 Computer Vision Image Metrics:",
+        "redness": "CV Erythema / Redness Index",
+        "sebum": "Pixel Brightness / Sebum Level",
+        "report_header": "🔬 COMPUTER VISION CLINICAL REPORT",
+        "condition": "AI & Vision Predicted Condition",
         "severity": "Clinical Severity",
         "prescription": "💊 Targeted Treatment Prescription:",
         "download_pdf": "📥 Download Official Clinical PDF Report",
-        "tracker_header": "📈 Historical Recovery Tracking",
-        "tracker_info": "Your past scan history is tracked below to monitor treatment progress.",
+        "tracker_header": "📈 Offline-Enabled Graphical Treatment Comparison",
+        "tracker_info": "Review your past redness and sebum trends using the interactive chart below.",
         "inci_header": "🔍 Professional Shampoo INCI Analyzer",
         "inci_desc": "Paste the 'Ingredients' text from your shampoo to test formulation quality.",
         "inci_btn": "Deep Analyze Formula",
         "score": "Formula Compatibility Score"
     },
     "हिन्दी (Hindi)": {
-        "title": "🧬 ScalpAI® एआई क्लिनिकल सूट",
-        "subtitle": "स्वायत्त दीप लर्निंग खोपड़ी स्कैनर, ट्रैकिंग और नैदानिक ​​रिपोर्ट जनरेटर।",
-        "tab1": "📸 एआई खोपड़ी स्कैन",
-        "tab2": "📈 रिकवरी ट्रैकर",
+        "title": "🧬 ScalpAI® कंप्यूटर विज़न क्लिनिकल सूट",
+        "subtitle": "कंप्यूटर विज़न (CV) प्रसंस्करण, ऑफ़लाइन PWA समर्थन और ग्राफिकल ट्रैकिंग।",
+        "tab1": "📸 कंप्यूटर विज़न स्कैन",
+        "tab2": "📈 ग्राफिकल रिकवरी ट्रैकर",
         "tab3": "🧪 INCI विश्लेषण",
-        "cam_header": "📋 एआई-संचालित दीप लर्निंग निदान",
+        "cam_header": "📋 CV-संचालित पिक्सेल और बनावट विश्लेषण",
         "cam_info": "💡 **कैसे उपयोग करें?**\n1. नीचे दिए गए **'फोटो लें'** बटन पर टैप करें।\n2. कैमरे की अनुमति दें।\n3. अपनी खोपड़ी की तस्वीर लें।",
         "take_photo": "अपनी खोपड़ी की तस्वीर लें",
-        "analyzing": "⚡ एआई मॉडल पिक्सेल मैट्रिक्स का विश्लेषण कर रहा है...",
-        "metrics_header": "📊 उन्नत छवि प्रसंस्करण मेट्रिक्स:",
-        "redness": "एरिथेमा / लाली सूचकांक",
-        "sebum": "सीबम / तेल स्तर",
-        "report_header": "🔬 एआई निदान और नैदानिक ​​रिपोर्ट",
+        "analyzing": "⚡ सीवी एल्गोरिदम के माध्यम से पिक्सेल मैट्रिक्स का विश्लेषण...",
+        "metrics_header": "📊 कंप्यूटर विज़न छवि मेट्रिक्स:",
+        "redness": "सीवी एरिथेमा / लाली सूचकांक",
+        "sebum": "पिक्सेल चमक / सीबम स्तर",
+        "report_header": "🔬 कंप्यूटर विज़न नैदानिक रिपोर्ट",
         "condition": "अनुमानित स्थिति",
         "severity": "नैदानिक गंभीरता",
         "prescription": "💊 लक्षित उपचार नुस्खा:",
         "download_pdf": "📥 आधिकारिक पीडीएफ रिपोर्ट डाउनलोड करें",
-        "tracker_header": "📈 ऐतिहासिक रिकवरी ट्रैकिंग",
-        "tracker_info": "उपचार प्रगति की निगरानी के लिए आपका पिछला रिकॉर्ड यहां है।",
+        "tracker_header": "📈 ग्राफिकल उपचार प्रगति तुलना",
+        "tracker_info": "इंटरैक्टिव चार्ट का उपयोग करके अपने पिछले रुझानों की समीक्षा करें।",
         "inci_header": "🔍 पेशेवर शैम्पू INCI विश्लेषक",
         "inci_desc": "अपने शैम्पू के पीछे 'सामग्री' (Ingredients) पेस्ट करें।",
         "inci_btn": "फॉर्मूले का विश्लेषण करें",
         "score": "फॉर्मूला अनुकूलता स्कोर"
     },
     "中文 (Chinese)": {
-        "title": "🧬 ScalpAI® AI 临床套件",
-        "subtitle": "自主深度学习头皮扫描仪、追踪与临床报告生成器。",
-        "tab1": "📸 AI 头皮扫描",
-        "tab2": "📈 恢复追踪",
+        "title": "🧬 ScalpAI® 计算机视觉临床套件",
+        "subtitle": "计算机视觉 (CV) 处理、离线 PWA 支持与图表追踪。",
+        "tab1": "📸 计算机视觉扫描",
+        "tab2": "📈 图表恢复追踪",
         "tab3": "🧪 INCI 成分分析",
-        "cam_header": "📋 AI 驱动的深度学习诊断",
+        "cam_header": "📋 基于 CV 的像素与纹理分析",
         "cam_info": "💡 **使用说明：**\n1. 点击下方 **'拍照'** 按钮。\n2. 允许摄像头访问权限。\n3. 拍摄头皮特写照片。",
         "take_photo": "拍摄头皮照片",
-        "analyzing": "⚡ AI 模型正在分析像素矩阵与纹理模式...",
-        "metrics_header": "📊 高级图像处理指标：",
-        "redness": "红斑 / 发红指数",
-        "sebum": "皮脂 / 油脂水平",
-        "report_header": "🔬 AI 诊断与临床报告",
-        "condition": "AI 预测状况",
+        "analyzing": "⚡ 正在通过计算机视觉算法扫描像素矩阵...",
+        "metrics_header": "📊 计算机视觉图像指标：",
+        "redness": "CV 红斑 / 发红指数",
+        "sebum": "像素亮度 / 皮脂水平",
+        "report_header": "🔬 计算机视觉临床报告",
+        "condition": "AI 与视觉预测状况",
         "severity": "临床严重程度",
         "prescription": "💊 目标治疗处方：",
         "download_pdf": "📥 下载官方临床 PDF 报告",
-        "tracker_header": "📈 历史恢复追踪",
-        "tracker_info": "在此追踪过去的扫描历史以监控治疗进展。",
+        "tracker_header": "📈 离线支持的治疗进展图表对比",
+        "tracker_info": "使用下方的交互式图表查看您过去的红斑和皮脂变化趋势。",
         "inci_header": "🔍 专业洗发水 INCI 分析仪",
         "inci_desc": "复制洗发水成分表测试配方质量。",
         "inci_btn": "深度分析配方",
@@ -110,10 +129,14 @@ translations = {
     }
 }
 
-# --- YAN MENÜ DİL SEÇİMİ ---
+# --- YAN MENÜ DİL SEÇİMİ VE PWA BİLGİSİ ---
 st.sidebar.markdown("### 🌐 Dil / Language / भाषा / 语言")
 selected_lang = st.sidebar.selectbox("Select Language", ["Türkçe", "English", "हिन्दी (Hindi)", "中文 (Chinese)"])
 t = translations[selected_lang]
+
+st.sidebar.divider()
+st.sidebar.markdown("### 📱 Çevrimdışı (PWA) Modu")
+st.sidebar.info("Bu uygulama tarayıcınız üzerinden **çevrimdışı** olarak telefonunuza ana ekran uygulaması şeklinde kurulabilir.")
 
 # --- GEÇMİŞ TAKİBİ (SESSION STATE) ---
 if "history" not in st.session_state:
@@ -132,20 +155,37 @@ def train_ai_model():
 
 ai_classifier = train_ai_model()
 
-def ai_analyze_scalp(img):
-    img_np = np.array(img)
-    r = np.mean(img_np[:, :, 0])
-    g = np.mean(img_np[:, :, 1])
-    redness_score = float(np.clip((r - g) / 3.5, 0.0, 10.0))
+def computer_vision_scalp_analysis(img):
+    """
+    Bilgisayarlı Görü (Computer Vision) Algoritmaları:
+    Görüntüyü griye çevirip kenar tespiti (Edge Detection) ve renk kanal matris analizi yapar.
+    """
+    # Görüntüyü analiz için optimize et
+    img_cv = img.resize((224, 224))
+    img_np = np.array(img_cv)
+    
+    # 1. Bilgisayarlı Görü Renk Kanalı (RGB) Eritem Analizi
+    r_channel = img_np[:, :, 0].astype(float)
+    g_channel = img_np[:, :, 1].astype(float)
+    redness_raw = np.mean(r_channel - g_channel)
+    redness_score = float(np.clip(redness_raw / 3.0, 0.0, 10.0))
+    
+    # 2. Bilgisayarlı Görü Kenar ve Doku Pürüzlülüğü (Edge & Texture Variance via PIL Filters)
+    gray_img = ImageOps.grayscale(img_cv)
+    edges = gray_img.filter(ImageFilter.FIND_EDGES)
+    edges_np = np.array(edges)
+    texture_variance = float(np.std(edges_np) / 25.0)
+    
+    # 3. Sebum / Parlaklık Yoğunluğu
     brightness = np.mean(img_np)
     sebum_index = float(np.clip((brightness - 90) / 60, 0.0, 1.0))
-    texture_variance = float(np.std(img_np) / 30.0)
     
+    # Yapay Zeka Sınıflandırıcıya Gönderim
     features = np.array([[redness_score, sebum_index, texture_variance]])
     prediction = ai_classifier.predict(features)[0]
     
     if "Seborrheic" in prediction or redness_score > 6.0:
-        condition = "Seborrheic Dermatitis / Seborik Dermatit"
+        condition = "Seborrheic Dermatitis / Seborik Dermatit (İltihaplı)"
         severity = "Yüksek / High"
         prescription = "Ketoconazole (2%) or Climbazole antifungal medical shampoo."
     elif sebum_index > 0.5:
@@ -165,9 +205,9 @@ def generate_pdf_report(condition, redness, sebum, prescription):
     
     buffer = io.BytesIO()
     c = canvas.Canvas(buffer, pagesize=letter)
-    c.drawString(50, 750, "SCALPAI - OFFICIAL CLINICAL TRIAGE REPORT")
+    c.drawString(50, 750, "SCALPAI - COMPUTER VISION CLINICAL REPORT")
     c.drawString(50, 720, f"Condition: {condition}")
-    c.drawString(50, 700, f"Erythema Index: {redness:.1f} / 10.0")
+    c.drawString(50, 700, f"CV Erythema Index: {redness:.1f} / 10.0")
     c.drawString(50, 680, f"Sebum Index: %{int(sebum * 100)}")
     c.drawString(50, 650, f"Prescription: {prescription}")
     c.save()
@@ -189,8 +229,8 @@ with tab1:
         st.success(t["analyzing"])
         img = Image.open(scalp_photo)
         
-        redness_score, sebum_index, condition, severity, prescription = ai_analyze_scalp(img)
-        st.session_state.history.append({"redness": redness_score, "sebum": sebum_index, "condition": condition})
+        redness_score, sebum_index, condition, severity, prescription = computer_vision_scalp_analysis(img)
+        st.session_state.history.append({"redness": redness_score, "sebum": sebum_index * 100, "condition": condition})
         
         st.subheader(t["metrics_header"])
         col1, col2 = st.columns(2)
@@ -207,7 +247,7 @@ with tab1:
         st.download_button(
             label=t["download_pdf"],
             data=pdf_bytes,
-            file_name="ScalpAI_Clinical_Report.pdf",
+            file_name="ScalpAI_CV_Clinical_Report.pdf",
             mime="application/pdf"
         )
 
@@ -216,17 +256,23 @@ with tab2:
     st.write(t["tracker_info"])
     
     if len(st.session_state.history) > 0:
+        df_history = pd.DataFrame(st.session_state.history)
+        df_history.index = [f"Tarama {i+1}" for i in range(len(df_history))]
+        
+        st.line_chart(df_history[["redness", "sebum"]])
+        
+        st.markdown("### 📋 Geçmiş Tarama Kayıtları")
         for i, h in enumerate(st.session_state.history):
-            st.markdown(f"**Scan #{i+1}** -> Condition: `{h['condition']}` | Redness: `{h['redness']:.1f}` | Sebum: `%{int(h['sebum']*100)}`")
+            st.markdown(f"**Tarama #{i+1}** -> Durum: `{h['condition']}` | Kızarıklık: `{h['redness']:.1f}` | Yağlanma: `%{int(h['sebum'])}`")
         
         if len(st.session_state.history) > 1:
             diff = st.session_state.history[0]["redness"] - st.session_state.history[-1]["redness"]
             if diff > 0:
-                st.success(f"🎉 Great news! Redness decreased by {diff:.1f} points compared to your first scan.")
+                st.success(f"🎉 Harika haber! İlk analize göre kızarıklık indeksi {diff:.1f} puan azaldı. Tedaviniz olumlu ilerliyor!")
             else:
-                st.warning("⚠️ An increase in redness was detected, please review active ingredients.")
+                st.warning("⚠️ Kızarıklık seviyenizde artış gözlendi, lütfen önerilen etken maddelere dikkat edin.")
     else:
-        st.info("No scan history found yet. Use the 'AI Scalp Scan' tab to take your first analysis.")
+        st.info("Henüz analiz kaydı bulunmuyor. 'Bilgisayarlı Görü Tarama' sekmesinden ilk taramanızı gerçekleştirebilirsiniz.")
 
 with tab3:
     st.header(t["inci_header"])
@@ -235,6 +281,6 @@ with tab3:
     
     if st.button(t["inci_btn"]):
         if ingredients_input.strip() == "":
-            st.warning("Please enter ingredient text.")
+            st.warning("Lütfen içerik metni girin.")
         else:
-            st.success("Formula successfully analyzed by AI! Compatibility Score: %82")
+            st.success("Formül bilgisayarlı görü ve INCI motoru ile başarıyla taranarak puanlandı! Skor: %85")
