@@ -1,10 +1,45 @@
+# KODUN BAŞI (app.py)
 import streamlit as st
 import numpy as np
-import pandas as pd
-from PIL import Image, ImageOps, ImageFilter
-import io
-from sklearn.ensemble import RandomForestClassifier
+# ... diğer importlar
 
+# --- SAYFA YAPILANDIRMASI ---
+st.set_page_config(
+    page_title="ScalpAI - Advanced Clinical Suite", 
+    page_icon="🧬", 
+    layout="centered",
+    initial_sidebar_state="expanded"
+)
+
+# --- MODERN KOYU TEMA VE CANLI UI ÖZEL CSS ---
+st.markdown("""
+<style>
+   /* ... BURAYA DAHA ÖNCE VERDİĞİMİZ CSS GELECEK ... */
+</style>
+""", unsafe_allow_html=True)
+
+# --- PWA MANIFEST VE İKON AYARI (EN KOLAY YÖNTEM) ---
+# Aşağıdaki blokta 'icon.png' dosyasını doğrudan gösteriyoruz.
+st.markdown("""
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
+        'name': 'ScalpAI Otonom Sistem',
+        'short_name': 'ScalpAI',
+        'start_url': '/',
+        'display': 'standalone',
+        'background_color': '#0f172a',
+        'theme_color': '#0f172a',
+        'icons': [{
+            'src': 'icon.png', 
+            'sizes': '512x512',
+            'type': 'image/png',
+            'purpose': 'any maskable'
+        }]
+    }">
+""", unsafe_allow_html=True)
+
+# --- ANA UYGULAMA BAŞLIYOR ---
+st.markdown("<h1 class='main-title'>🧬 ScalpAI® Görüntü İşlemeli Klinik Paketi</h1>", unsafe_allow_html=True)
+# ... uygulamanın geri kalanı
 # --- SAYFA YAPILANDIRMASI ---
 st.set_page_config(
     page_title="ScalpAI - Advanced Clinical Suite", 
