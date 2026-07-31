@@ -1,45 +1,10 @@
-# KODUN BAŞI (app.py)
 import streamlit as st
 import numpy as np
-# ... diğer importlar
+import pandas as pd
+from PIL import Image, ImageOps, ImageFilter
+import io
+from sklearn.ensemble import RandomForestClassifier
 
-# --- SAYFA YAPILANDIRMASI ---
-st.set_page_config(
-    page_title="ScalpAI - Advanced Clinical Suite", 
-    page_icon="🧬", 
-    layout="centered",
-    initial_sidebar_state="expanded"
-)
-
-# --- MODERN KOYU TEMA VE CANLI UI ÖZEL CSS ---
-st.markdown("""
-<style>
-   /* ... BURAYA DAHA ÖNCE VERDİĞİMİZ CSS GELECEK ... */
-</style>
-""", unsafe_allow_html=True)
-
-# --- PWA MANIFEST VE İKON AYARI (EN KOLAY YÖNTEM) ---
-# Aşağıdaki blokta 'icon.png' dosyasını doğrudan gösteriyoruz.
-st.markdown("""
-    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
-        'name': 'ScalpAI Otonom Sistem',
-        'short_name': 'ScalpAI',
-        'start_url': '/',
-        'display': 'standalone',
-        'background_color': '#0f172a',
-        'theme_color': '#0f172a',
-        'icons': [{
-            'src': 'icon.png', 
-            'sizes': '512x512',
-            'type': 'image/png',
-            'purpose': 'any maskable'
-        }]
-    }">
-""", unsafe_allow_html=True)
-
-# --- ANA UYGULAMA BAŞLIYOR ---
-st.markdown("<h1 class='main-title'>🧬 ScalpAI® Görüntü İşlemeli Klinik Paketi</h1>", unsafe_allow_html=True)
-# ... uygulamanın geri kalanı
 # --- SAYFA YAPILANDIRMASI ---
 st.set_page_config(
     page_title="ScalpAI - Advanced Clinical Suite", 
@@ -121,7 +86,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# PWA Manifest Enjeksiyonu
+# --- PWA MANIFEST VE İKON ENJEKSİYONU ---
 st.markdown("""
     <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
         'name': 'ScalpAI Otonom Sistem',
@@ -129,7 +94,13 @@ st.markdown("""
         'start_url': '/',
         'display': 'standalone',
         'background_color': '#0f172a',
-        'theme_color': '#0f172a'
+        'theme_color': '#0f172a',
+        'icons': [{
+            'src': 'icon.png',
+            'sizes': '512x512',
+            'type': 'image/png',
+            'purpose': 'any maskable'
+        }]
     }">
 """, unsafe_allow_html=True)
 
@@ -383,7 +354,6 @@ with tab3:
     st.subheader(t["inci_header"])
     st.write(t["inci_desc"])
     
-    # Kamera ile etiket çekme özelliği eklendi
     inci_photo = st.camera_input(t["inci_cam_label"])
     
     st.markdown("---")
@@ -393,7 +363,6 @@ with tab3:
     if st.button(t["inci_btn"]):
         if inci_photo is not None or ingredients_input.strip() != "":
             with st.spinner("Şampuan formülü ve etiket dokusu optik olarak taranıyor..."):
-                # Simüle edilmiş derin INCI analizi sonuçları
                 st.success("🎯 Detaylı INCI ve Etiket Analizi Tamamlandı!")
                 
                 col_a, col_b = st.columns(2)
