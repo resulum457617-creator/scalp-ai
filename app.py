@@ -13,70 +13,86 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- MODERN VE CANLI UI İÇİN ÖZEL CSS (GELİŞMİŞ TASARIM) ---
+# --- MODERN KOYU TEMA VE CANLI UI ÖZEL CSS ---
 st.markdown("""
 <style>
-    /* Genel Arka Plan ve Tipografi */
+    /* Ana Sayfa Arka Planı ve Yazı Rengi (Garanti Koyu Tema) */
     .stApp {
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        background-color: #0f172a !important;
+        color: #f8fafc !important;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     
+    /* Yan Menü (Sidebar) Tasarımı */
+    section[data-testid="stSidebar"] {
+        background-color: #1e293b !important;
+        color: #f8fafc !important;
+    }
+    section[data-testid="stSidebar"] .stMarkdown, section[data-testid="stSidebar"] label {
+        color: #f8fafc !important;
+    }
+
     /* Ana Başlık Canlı Gradyan */
     .main-title {
-        background: linear-gradient(90deg, #0284c7 0%, #0d9488 100%);
+        background: linear-gradient(90deg, #38bdf8 0%, #2dd4bf 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         font-weight: 800;
-        font-size: 2.3rem;
+        font-size: 2.2rem;
         margin-bottom: 0rem;
     }
     
     /* Sekme (Tabs) Tasarımı */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
-        background-color: #ffffff;
+        background-color: #1e293b;
         padding: 10px;
         border-radius: 16px;
-        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
     }
     .stTabs [data-baseweb="tab"] {
         height: 48px;
         background-color: transparent;
         border-radius: 10px;
         font-weight: 600;
-        color: #64748b;
+        color: #94a3b8;
         padding: 0 20px;
     }
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+        background: linear-gradient(135deg, #0284c7 0%, #0d9488 100%) !important;
         color: white !important;
-        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
     }
 
     /* Buton Tasarımları */
     div.stButton > button {
-        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+        background: linear-gradient(135deg, #0284c7 0%, #0d9488 100%);
         color: white;
         font-weight: 600;
         border: none;
         border-radius: 12px;
         padding: 0.6rem 1.5rem;
-        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
         transition: all 0.3s ease;
     }
     div.stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45);
+        box-shadow: 0 6px 20px rgba(13, 148, 136, 0.6);
     }
 
     /* Metrik Kutuları */
     div[data-testid="metric-container"] {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
+        background: #1e293b !important;
+        border: 1px solid #334155;
         padding: 16px;
         border-radius: 16px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    div[data-testid="metric-container"] label {
+        color: #94a3b8 !important;
+    }
+    div[data-testid="metric-container"] [data-testid="stMetricValue"] {
+        color: #38bdf8 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -88,8 +104,8 @@ st.markdown("""
         'short_name': 'ScalpAI',
         'start_url': '/',
         'display': 'standalone',
-        'background_color': '#ffffff',
-        'theme_color': '#0284c7'
+        'background_color': '#0f172a',
+        'theme_color': '#0f172a'
     }">
 """, unsafe_allow_html=True)
 
