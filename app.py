@@ -86,7 +86,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- PWA MANIFEST VE İKON ENJEKSİYONU ---
+# --- PWA MANIFEST VE İKON ENJEKSİYONU (DÜZELTİLDİ) ---
 st.markdown("""
     <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
         'name': 'ScalpAI Otonom Sistem',
@@ -96,7 +96,7 @@ st.markdown("""
         'background_color': '#0f172a',
         'theme_color': '#0f172a',
         'icons': [{
-            'src': 'icon.png',
+            'src': 'https://raw.githubusercontent.com/resulum457617-creator/scalp-ai/6cd0c1ee601da5ad85fc55fb56764c236d5cab73/icon.png',
             'sizes': '512x512',
             'type': 'image/png',
             'purpose': 'any maskable'
