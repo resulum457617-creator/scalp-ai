@@ -20,17 +20,14 @@ st.set_page_config(
     }
 )
 
-# --- APPLE VISONOS / LIQUID GLASS & DARK LÜKS CSS MİMARİSİ ---
+# --- APPLE VISONOS / LIQUID GLASS & DAİRESEL GÖSTERGE CSS MİMARİSİ ---
 st.markdown("""
 <style>
-    /* Ana Uygulama Arka Planı */
     .stApp {
         background: radial-gradient(circle at 50% -20%, #1e293b 0%, #090d16 70%, #020408 100%) !important;
         color: #f8fafc !important;
         font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Roboto, sans-serif !important;
     }
-    
-    /* Apple Tarzı Sidebar / Yan Menü */
     section[data-testid="stSidebar"] {
         background: rgba(13, 18, 30, 0.75) !important;
         backdrop-filter: blur(24px) saturate(180%) !important;
@@ -40,8 +37,6 @@ st.markdown("""
     section[data-testid="stSidebar"] .stMarkdown, section[data-testid="stSidebar"] label {
         color: #cbd5e1 !important;
     }
-    
-    /* Ultra Lüks Başlık Sistemi */
     .apple-hero-container {
         padding: 1.5rem 0 2rem 0;
         border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -62,8 +57,6 @@ st.markdown("""
         font-weight: 400;
         letter-spacing: -0.01em;
     }
-    
-    /* Apple HIG Tarzı Sekme (Tabs) Mimarisi */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
         background-color: rgba(15, 23, 42, 0.65);
@@ -95,8 +88,8 @@ st.markdown("""
         box-shadow: 0 8px 24px rgba(2, 132, 199, 0.35);
     }
     
-    /* Apple Liquid Glass Kart Yapıları */
-    div[data-testid="metric-container"], .stAlert, [data-testid="stFileUploader"], [data-testid="stCameraInput"] {
+    /* Apple Liquid Glass Kart Kartları */
+    .glass-card, .stAlert, [data-testid="stFileUploader"], [data-testid="stCameraInput"] {
         background: rgba(30, 41, 59, 0.45) !important;
         backdrop-filter: blur(16px) saturate(150%) !important;
         -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
@@ -104,25 +97,58 @@ st.markdown("""
         padding: 24px !important;
         border-radius: 24px !important;
         box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.4);
-        transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-    div[data-testid="metric-container"]:hover {
-        transform: translateY(-2px);
-        border-color: rgba(56, 189, 248, 0.25) !important;
-        box-shadow: 0 20px 40px -8px rgba(2, 132, 199, 0.2);
-    }
-    div[data-testid="metric-container"] label {
-        color: #94a3b8 !important;
-        font-weight: 500;
-        font-size: 0.9rem;
-    }
-    div[data-testid="metric-container"] [data-testid="stMetricValue"] {
-        color: #38bdf8 !important;
-        font-weight: 700;
-        font-size: 1.8rem;
     }
     
-    /* Buton Tasarımı */
+    /* Ultra Lüks SVG Dairesel Gösterge (Circular Progress Ring) Stilleri */
+    .circle-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(30, 41, 59, 0.45);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        padding: 20px;
+        border-radius: 24px;
+        box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.4);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+    .circle-container:hover {
+        transform: translateY(-2px);
+        border-color: rgba(56, 189, 248, 0.25);
+    }
+    .circular-chart {
+        display: block;
+        margin: 10px auto;
+        max-width: 130px;
+        max-height: 130px;
+    }
+    .circle-bg {
+        fill: none;
+        stroke: rgba(255, 255, 255, 0.08);
+        stroke-width: 3.8;
+    }
+    .circle {
+        fill: none;
+        stroke-width: 3.8;
+        stroke-linecap: round;
+        animation: progress 1s ease-out forwards;
+    }
+    .percentage {
+        fill: #f8fafc;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+        font-size: 0.55em;
+        font-weight: 700;
+        text-anchor: middle;
+    }
+    .circle-label {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-top: 8px;
+    }
+    
     div.stButton > button {
         background: linear-gradient(135deg, #0284c7 0%, #0d9488 100%);
         color: white;
@@ -164,7 +190,7 @@ def validate_password_strength(password):
         return "Şifre en az bir özel karakter (!@#$%^&* vb.) içermelidir."
     return None
 
-# --- APPLE TARZI YAN MENÜ GİRİŞ/KAYIT ---
+# --- YAN MENÜ GİRİŞ/KAYIT ---
 st.sidebar.markdown("### 👤 Klinik Bulut Portalı")
 
 if st.session_state.logged_in_user is None:
@@ -219,7 +245,7 @@ else:
         st.rerun()
     st.sidebar.divider()
 
-# --- 9 DİLLİ ULUSLARARASI KAPSAMLI SÖZLÜK ---
+# --- 12 DİLLİ ULUSLARARASI KAPSAMLI SÖZLÜK ---
 translations = {
     "Türkçe": {
         "title": "🧬 ScalpAI® Görüntü İşlemeli Klinik Paketi",
@@ -231,7 +257,7 @@ translations = {
         "cam_info": "💡 **Nasıl Kullanılır?**\n1. Kafa derinizin net bir fotoğrafını çekin.\n2. OpenCV önişleme hattı ve CNN yapay zeka matrisi analizi gerçekleştirsin.",
         "take_photo": "Kafa Derisi Fotoğrafını Çekin",
         "analyzing": "⚡ OpenCV kırpma ve CNN yapay zeka katmanı işleniyor...",
-        "metrics_header": "📊 Gelişmiş Görüntüleme Matris Metrikleri:",
+        "metrics_header": "📊 Dairesel Optik Görüntüleme Matris Metrikleri:",
         "redness": "AI Erythema / Kızarıklık İndeksi",
         "sebum": "Sebum / Yağlanma Yoğunluğu",
         "report_header": "🔬 KLİNİK YAPAY ZEKA RAPORU",
@@ -256,7 +282,7 @@ translations = {
         "cam_info": "💡 **How to Use?**\n1. Take a clear close-up photo of your scalp.\n2. OpenCV pipeline & CNN AI model will process indices.",
         "take_photo": "Take a photo of your scalp",
         "analyzing": "⚡ OpenCV cropping & CNN AI model processing matrices...",
-        "metrics_header": "📊 Advanced Vision Matrix Metrics:",
+        "metrics_header": "📊 Circular Vision Matrix Metrics:",
         "redness": "AI Erythema / Redness Index",
         "sebum": "Sebum / Oil Density Level",
         "report_header": "🔬 CLINICAL AI REPORT",
@@ -281,7 +307,7 @@ translations = {
         "cam_info": "💡 **Comment utiliser ?**\n1. Prenez une photo nette de votre cuir chevelu.\n2. L'IA analyse les indices de rougeur et de sébum.",
         "take_photo": "Prenez une photo de votre cuir chevelu",
         "analyzing": "⚡ Traitement par le modèle d'IA CNN...",
-        "metrics_header": "📊 Métriques de la Matrice Visuelle :",
+        "metrics_header": "📊 Métriques de la Matrice Circulaire :",
         "redness": "Indice d'Érythème / Rougeur",
         "sebum": "Densité de Sébum / Graisse",
         "report_header": "🔬 RAPPORT CLINIQUE IA",
@@ -306,7 +332,7 @@ translations = {
         "cam_info": "💡 **Anwendung:** Machen Sie ein klares Nahaufnahmefoto Ihrer Kopfhaut.",
         "take_photo": "Kopfhaut-Foto aufnehmen",
         "analyzing": "⚡ CNN KI-Modell verarbeitet optische Matrizen...",
-        "metrics_header": "📊 Erweiterte Visionsmetriken:",
+        "metrics_header": "📊 Erweiterte Kreisförmige Metriken:",
         "redness": "AI Erythem / Rötungsindex",
         "sebum": "Talg- / Öldichtestufe",
         "report_header": "🔬 KLINISCHER KI-BERICHT",
@@ -331,7 +357,7 @@ translations = {
         "cam_info": "💡 **Cómo usar:** Tome una foto clara de su cuero cabelludo.",
         "take_photo": "Tomar foto del cuero cabelludo",
         "analyzing": "⚡ Procesando matriz de IA CNN...",
-        "metrics_header": "📊 Métricas de Matriz Visual:",
+        "metrics_header": "📊 Métricas de Matriz Circular:",
         "redness": "Índice de Eritema / Enrojecimiento",
         "sebum": "Densidad de Sebo / Grasa",
         "report_header": "🔬 INFORME CLÍNICO DE IA",
@@ -356,7 +382,7 @@ translations = {
         "cam_info": "💡 **Como usar:** Tire uma foto nítida do seu couro cabeludo.",
         "take_photo": "Tirar foto do couro cabeludo",
         "analyzing": "⚡ Processando matriz de IA CNN...",
-        "metrics_header": "📊 Métricas da Matriz Visual:",
+        "metrics_header": "📊 Métricas da Matriz Circular:",
         "redness": "Índice de Eritema / Vermelhidão",
         "sebum": "Densidade de Sebo / Oleosidade",
         "report_header": "🔬 RELATÓRIO CLÍNICO DE IA",
@@ -381,7 +407,7 @@ translations = {
         "cam_info": "💡 **Как использовать:** Сделайте четкий снимок кожи головы.",
         "take_photo": "Сделать фото кожи головы",
         "analyzing": "⚡ Обработка матриц моделью ИИ CNN...",
-        "metrics_header": "📊 Метрики Визуальной Матрицы:",
+        "metrics_header": "📊 Метрики Круговой Матрицы:",
         "redness": "Индекс Эритемы / Покраснения",
         "sebum": "Плотность Себума / Жирности",
         "report_header": "🔬 КЛИНИЧЕСКИЙ ОТЧЕТ ИИ",
@@ -396,6 +422,81 @@ translations = {
         "inci_cam_label": "Сфотографировать этикетку",
         "inci_btn": "Глубокий Анализ Формулы",
     },
+    "العربية (Arabic)": {
+        "title": "🧬 باقة سكالپ إيه آي السريرية المتقدمة",
+        "subtitle": "مصفوفة نموذج الذكاء الاصطناعي المتقدمة، تتبع الملف الشخصي والتحليل البصري السريري.",
+        "tab1": "📸 فحص الرؤية الحاسوبية",
+        "tab2": "📈 متتبع التعافي البياني",
+        "tab3": "🧪 تحليل المكونات INCI",
+        "cam_header": "📋 تحليل مصفوفة CNN و OpenCV المتقدم",
+        "cam_info": "💡 **كيفية الاستخدام؟**\n1. التقط صورة مقربة واضحة لفروة الرأس.\n2. ستقوم خوارزميات الذكاء الاصطناعي بتحليل المؤشرات بدقة.",
+        "take_photo": "التقط صورة لفروة الرأس",
+        "analyzing": "⚡ جاري معالجة مصفوفة الذكاء الاصطناعي والصور...",
+        "metrics_header": "📊 مقاييس مصفوفة الرؤية الدائرية:",
+        "redness": "مؤشر الاحمرار والالتهاب",
+        "sebum": "مستوى كثافة الدهون والزيوت",
+        "report_header": "🔬 تقرير الذكاء الاصطناعي السريري",
+        "condition": "الحالة المرضية المتوقعة",
+        "severity": "درجة الخطورة السريرية",
+        "prescription": "💊 وصفة العلاج المخصصة:",
+        "download_pdf": "📥 تحميل التقرير السريري الرسمي PDF",
+        "tracker_header": "📈 تقدم العلاج السحابي",
+        "tracker_info": "تحليل الاتجاه البياني لفحوصاتك الطبية المحفوظة:",
+        "inci_header": "🔍 محلل الشامبو الاحترافي INCI",
+        "inci_desc": "التقط صورة لملصق الشامبو أو أدخل النص أدناه.",
+        "inci_cam_label": "تصوير ملصق الشامبو",
+        "inci_btn": "تحليل عميق للتركيبة",
+    },
+    "Bahasa Indonesia (Indonesian)": {
+        "title": "🧬 ScalpAI® Suite Klinis Tingkat Lanjut",
+        "subtitle": "Matriks Model AI Tingkat Lanjut, Pelacakan Profil Pribadi & Analisis Optik Klinis.",
+        "tab1": "📸 Pemindaian Computer Vision",
+        "tab2": "📈 Pelacak Pemulihan Grafis",
+        "tab3": "🧪 Analisis INCI",
+        "cam_header": "📋 Analisis Matriks CNN & OpenCV Tingkat Lanjut",
+        "cam_info": "💡 **Cara Penggunaan?**\n1. Ambil foto close-up kulit kepala Anda yang jelas.\n2. Pipa OpenCV & model AI CNN akan memproses indeks.",
+        "take_photo": "Ambil Foto Kulit Kepala",
+        "analyzing": "⚡ Pemotongan OpenCV & pemrosesan matriks AI CNN...",
+        "metrics_header": "📊 Metrik Matriks Visi Melingkar:",
+        "redness": "Indeks Eritema / Kemerahan AI",
+        "sebum": "Tingkat Kepadatan Sebum / Minyak",
+        "report_header": "🔬 LAPORAN KLINIS AI",
+        "condition": "Patologi Prediksi AI",
+        "severity": "Tingkat Keparahan Klinis",
+        "prescription": "💊 Resep Perawatan Target:",
+        "download_pdf": "📥 Unduh Laporan PDF Klinis Resmi",
+        "tracker_header": "📈 Perkembangan Perawatan Berbasis Cloud",
+        "tracker_info": "Analisis tren grafis dari pemindaian medis cloud Anda yang disimpan:",
+        "inci_header": "🔍 Analis Shampo INCI Profesional",
+        "inci_desc": "Ambil foto label shampo Anda ATAU tempel teks di bawah.",
+        "inci_cam_label": "Ambil Foto Label Shampo",
+        "inci_btn": "Analisis Formula Mendalam",
+    },
+    "ภาษาไทย (Thai)": {
+        "title": "🧬 ScalpAI® ชุดเครื่องมือคลินิกขั้นสูง",
+        "subtitle": "เมทริกซ์โมเดล AI ขั้นสูง การติดตามโปรไฟล์ส่วนบุคคล และการวิเคราะห์ทางคลินิก",
+        "tab1": "📸 สแกนคอมพิวเตอร์วิทัศน์",
+        "tab2": "📈 ตัวติดตามการฟื้นตัวแบบกราฟิก",
+        "tab3": "🧪 วิเคราะห์ INCI",
+        "cam_header": "📋 การวิเคราะห์เมทริกซ์ CNN & OpenCV ขั้นสูง",
+        "cam_info": "💡 **วิธีใช้งาน?**\n1. ถ่ายภาพหนังศีรษะระยะใกล้ที่ชัดเจน\n2. ระบบจะประมวลผลดัชนีความผิดปกติผ่านโมเดล AI",
+        "take_photo": "ถ่ายภาพหนังศีรษะของคุณ",
+        "analyzing": "⚡ กำลังประมวลผลเมทริกซ์ AI และ OpenCV...",
+        "metrics_header": "📊 ตัวชี้วัดเมทริกซ์วงกลม:",
+        "redness": "ดัชนีรอยแดง / อาการอักเสบ",
+        "sebum": "ระดับความมัน / ความหนาแน่นของซีบัม",
+        "report_header": "🔬 รายงานคลินิก AI",
+        "condition": "ภาวะความผิดปกติที่ AI คาดการณ์",
+        "severity": "ระดับความรุนแรงทางคลินิก",
+        "prescription": "💊 ใบสั่งยาการรักษาเป้าหมาย:",
+        "download_pdf": "📥 ดาวน์โหลดรายงาน PDF ทางคลินิกอย่างเป็นทางการ",
+        "tracker_header": "📈 ความก้าวหน้าการรักษาบนคลาวด์",
+        "tracker_info": "กราฟแนวโน้มการเปลี่ยนแปลงจากการสแกนครั้งก่อนๆ:",
+        "inci_header": "🔍 เครื่องมือวิเคราะห์แชมพู INCI มืออาชีพ",
+        "inci_desc": "ถ่ายภาพฉลากส่วนผสมแชมพูของคุณ หรือพิมพ์ข้อความลงด้านล่าง",
+        "inci_cam_label": "ถ่ายภาพฉลากแชมพู",
+        "inci_btn": "วิเคราะห์สูตรเชิงลึก",
+    },
     "हिन्दी (Hindi)": {
         "title": "🧬 ScalpAI® उन्नत क्लिनिकल सूट",
         "subtitle": "उन्नत एआई मॉडल मैट्रिक्स, व्यक्तिगत प्रोफ़ाइल और नैदानिक ऑप्टिकल विश्लेषण।",
@@ -406,7 +507,7 @@ translations = {
         "cam_info": "💡 **कैसे उपयोग करें?** अपनी खोपड़ी की तस्वीर लें।",
         "take_photo": "अपनी खोपड़ी की तस्वीर लें",
         "analyzing": "⚡ उन्नत एआई मॉडल पिक्सेल मैट्रिक्स को स्कैन कर रहा है...",
-        "metrics_header": "📊 उन्नत दृष्टि मैट्रिक्स मेट्रिक्स:",
+        "metrics_header": "📊 वृular दृष्टि मैट्रिक्स मेट्रिक्स:",
         "redness": "एआई एरिथेमा / लाली सूचकांक",
         "sebum": "सीबम / तेल घनत्व स्तर",
         "report_header": "🔬 नैदानिक एआई रिपोर्ट",
@@ -431,7 +532,7 @@ translations = {
         "cam_info": "💡 **使用说明：** 拍摄头皮特写照片进行分析。",
         "take_photo": "拍摄头皮照片",
         "analyzing": "⚡ 高级 AI 模型正在扫描像素矩阵...",
-        "metrics_header": "📊 高级视觉矩阵指标：",
+        "metrics_header": "📊 圆形视觉矩阵指标：",
         "redness": "AI 红斑 / 发红指数",
         "sebum": "皮脂 / 油脂密度水平",
         "report_header": "🔬 临床 AI 报告",
@@ -449,7 +550,7 @@ translations = {
 }
 
 # --- YAN MENÜ DİL SEÇİMİ ---
-st.sidebar.markdown("### 🌐 Dil / Language / Langue")
+st.sidebar.markdown("### 🌐 Dil / Language / اللغة")
 selected_lang = st.sidebar.selectbox("Select Language", list(translations.keys()), label_visibility="collapsed")
 t = translations[selected_lang]
 
@@ -550,9 +651,36 @@ with tab1:
             user_history.append({"redness": redness_score, "sebum": sebum_index * 100, "condition": condition})
             
             st.markdown(f"### {t['metrics_header']}")
-            m1, m2 = st.columns(2)
-            m1.metric(t["redness"], f"{redness_score:.1f} / 10.0")
-            m2.metric(t["sebum"], f"%{int(sebum_index * 100)}")
+            
+            # --- SVG DAİRESEL GÖSTERGE HESAPLAMALARI ---
+            redness_pct = int((redness_score / 10.0) * 100)
+            sebum_pct = int(sebum_index * 100)
+            
+            c_col1, c_col2 = st.columns(2)
+            
+            with c_col1:
+                st.markdown(f"""
+                <div class="circle-container">
+                    <svg viewBox="0 0 36 36" class="circular-chart">
+                      <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                      <path class="circle" stroke-dasharray="{redness_pct}, 100" stroke="#38bdf8" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                      <text x="18" y="20.35" class="percentage">{redness_score:.1f}</text>
+                    </svg>
+                    <div class="circle-label">{t["redness"]}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+            with c_col2:
+                st.markdown(f"""
+                <div class="circle-container">
+                    <svg viewBox="0 0 36 36" class="circular-chart">
+                      <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                      <path class="circle" stroke-dasharray="{sebum_pct}, 100" stroke="#2dd4bf" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                      <text x="18" y="20.35" class="percentage">%{sebum_pct}</text>
+                    </svg>
+                    <div class="circle-label">{t["sebum"]}</div>
+                </div>
+                """, unsafe_allow_html=True)
             
             st.divider()
             st.subheader(t["report_header"])
@@ -607,14 +735,35 @@ with tab3:
                 st.success("🎯 Detaylı INCI ve Etiket Analizi Tamamlandı!")
                 
                 col_a, col_b = st.columns(2)
-                col_a.metric("Formül Uyum Skoru", "%91 / Mükemmel")
-                col_b.metric("Sülfat / Deterjan Riski", "Düşük / Hassas Uyumlu")
+                
+                # INCI sekmesinde dairesel estetik uyum göstergesi
+                col_a.markdown(f"""
+                <div class="circle-container">
+                    <svg viewBox="0 0 36 36" class="circular-chart">
+                      <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                      <path class="circle" stroke-dasharray="91, 100" stroke="#38bdf8" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                      <text x="18" y="20.35" class="percentage">%91</text>
+                    </svg>
+                    <div class="circle-label">Formül Uyum Skoru</div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                col_b.markdown(f"""
+                <div class="circle-container">
+                    <svg viewBox="0 0 36 36" class="circular-chart">
+                      <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                      <path class="circle" stroke-dasharray="25, 100" stroke="#2dd4bf" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                      <text x="18" y="20.35" class="percentage">%25</text>
+                    </svg>
+                    <div class="circle-label">Sülfat / Deterjan Riski</div>
+                </div>
+                """, unsafe_allow_html=True)
                 
                 st.markdown("### 🔬 Tespit Edilen Aktif Bileşenler & Etkileri:")
                 st.markdown("- **Piroctone Olamine / Ketoconazole:** Antifungal etki gösterir, kepek ve seboreik dermatiti baskılar. ✅ *(Klinik olarak önerilir)*")
                 st.markdown("- **Sodium Laureth Sulfate (SLES):** Temizleyici bazdır ancak hassas kafa derilerinde hafif kuruluk yapabilir. ⚠️")
                 st.markdown("- **Panthenol & Glycerin:** Kafa derisini yatıştırır ve nem dengesini korur. ✅")
                 
-                st.info("💡 **Uzman Tavsiyesi:** Bu formül kafa derisindeki sebum dengesini korumak için uygundur ancak haftada 2-3 defadan fazla kullanılmamalıdır.")
+                st.info("💡 **Uzman Tavsiyesi:** Bu formül kafa derisindeki sebum dengesini korumاست için uygundur ancak haftada 2-3 defadan fazla kullanılmamalıdır.")
         else: 
             st.warning("Lütfen şampuan etiketinin fotoğrafını çekin ya da metin kutusuna içerikleri girin.")
