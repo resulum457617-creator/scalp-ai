@@ -86,7 +86,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- PWA MANIFEST VE İKON ENJEKSİYONU (DÜZELTİLDİ) ---
+# --- PWA MANIFEST VE İKON ENJEKSİYONU ---
 st.markdown("""
     <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
         'name': 'ScalpAI Otonom Sistem',
@@ -102,6 +102,15 @@ st.markdown("""
             'purpose': 'any maskable'
         }]
     }">
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('Service Workerregistered!', reg))
+            .catch(err => console.log('Service Worker registration failed:', err));
+        });
+      }
+    </script>
 """, unsafe_allow_html=True)
 
 # --- 4 DİLLİ ULUSLARARASI SÖZLÜK ---
