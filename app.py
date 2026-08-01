@@ -88,7 +88,6 @@ st.markdown("""
         box-shadow: 0 8px 24px rgba(2, 132, 199, 0.35);
     }
     
-    /* Apple Liquid Glass Kart Kartları */
     .glass-card, .stAlert, [data-testid="stFileUploader"], [data-testid="stCameraInput"] {
         background: rgba(30, 41, 59, 0.45) !important;
         backdrop-filter: blur(16px) saturate(150%) !important;
@@ -99,7 +98,6 @@ st.markdown("""
         box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.4);
     }
     
-    /* Ultra Lüks SVG Dairesel Gösterge (Circular Progress Ring) Stilleri */
     .circle-container {
         display: flex;
         flex-direction: column;
@@ -215,7 +213,8 @@ if st.session_state.logged_in_user is None:
                         st.session_state.users[reg_email] = {
                             "username": reg_name,
                             "password": hash_password(reg_pass),
-                            "history": []
+                            "history": [],
+                            "chat_messages": []
                         }
                         st.sidebar.success(f"✅ Kayıt başarılı! `{reg_email}` adresine SMTP aktivasyon postası yollandı.")
                         st.sidebar.info("📧 **SMTP E-posta Servisi:**\n'ScalpAI Bulut Sistemine hoş geldiniz. E-posta adresiniz doğrulanmıştır.'")
@@ -228,6 +227,9 @@ if st.session_state.logged_in_user is None:
         if st.sidebar.button("Buluta Giriş Yap"):
             if auth_email in st.session_state.users and st.session_state.users[auth_email]["password"] == hash_password(auth_pass):
                 st.session_state.logged_in_user = auth_email
+                # Eğer eski kayıtlarda chat_messages yoksa ekle
+                if "chat_messages" not in st.session_state.users[auth_email]:
+                    st.session_state.users[auth_email]["chat_messages"] = []
                 st.sidebar.success(f"Bağlantı Kuruldu: {st.session_state.users[auth_email]['username']}")
                 st.rerun()
             else:
@@ -253,6 +255,7 @@ translations = {
         "tab1": "📸 Bilgisayarlı Görü Tarama",
         "tab2": "📈 Grafiksel İyileşme Takibi",
         "tab3": "🧪 INCI Formül Analizi",
+        "tab4": "🤖 AI Dermatolog Asistanı",
         "cam_header": "📋 Gelişmiş CNN & OpenCV Matris Analizi",
         "cam_info": "💡 **Nasıl Kullanılır?**\n1. Kafa derinizin net bir fotoğrafını çekin.\n2. OpenCV önişleme hattı ve CNN yapay zeka matrisi analizi gerçekleştirsin.",
         "take_photo": "Kafa Derisi Fotoğrafını Çekin",
@@ -267,7 +270,7 @@ translations = {
         "download_pdf": "📥 Resmi Klinik PDF Raporunu İndir",
         "tracker_header": "📈 Bulut Tabanlı Tedavi İlerleme Eğrisi",
         "tracker_info": "Bulut hesabınıza kayıtlı geçmiş taramalarınızın grafiksel değişim tablosu:",
-        "inci_header": "🔍 Profesyonel INCI Şampuan Analizcisi",
+        "inci_header": "🔍 Profesyonel Şampuan Analizcisi",
         "inci_desc": "Şampuan etiketinin fotoğrafını çekin VEYA içerik metnini doğrudan girin.",
         "inci_cam_label": "Şampuan Etiketini Kameraya Çekin",
         "inci_btn": "Formülü Derinlemesine Analiz Et",
@@ -278,6 +281,7 @@ translations = {
         "tab1": "📸 Computer Vision Scan",
         "tab2": "📈 Graphical Recovery Tracker",
         "tab3": "🧪 INCI Analysis",
+        "tab4": "🤖 AI Dermatologist Assistant",
         "cam_header": "📋 Advanced CNN & OpenCV Matrix Analysis",
         "cam_info": "💡 **How to Use?**\n1. Take a clear close-up photo of your scalp.\n2. OpenCV pipeline & CNN AI model will process indices.",
         "take_photo": "Take a photo of your scalp",
@@ -292,7 +296,7 @@ translations = {
         "download_pdf": "📥 Download Official Clinical PDF Report",
         "tracker_header": "📈 Cloud-Based Treatment Progress",
         "tracker_info": "Graphical trend analysis of your saved cloud medical scans:",
-        "inci_header": "🔍 Professional INCI Shampoo Analyzer",
+        "inci_header": "🔍 Professional Shampoo Analyzer",
         "inci_desc": "Take a photo of your shampoo label OR paste the text below.",
         "inci_cam_label": "Take a photo of Shampoo Label",
         "inci_btn": "Deep Analyze Formula",
@@ -303,8 +307,9 @@ translations = {
         "tab1": "📸 Scan de Vision par Ordinateur",
         "tab2": "📈 Suivi Graphique de Récupération",
         "tab3": "🧪 Analyse INCI",
+        "tab4": "🤖 Assistant Dermatologue IA",
         "cam_header": "📋 Analyse Avancée CNN & OpenCV",
-        "cam_info": "💡 **Comment utiliser ?**\n1. Prenez une photo nette de votre cuir chevelu.\n2. L'IA analyse les indices de rougeur et de sébum.",
+        "cam_info": "💡 **Comment utiliser ?**\n1. Prenez une photo nette de votre cuir chevelu.",
         "take_photo": "Prenez une photo de votre cuir chevelu",
         "analyzing": "⚡ Traitement par le modèle d'IA CNN...",
         "metrics_header": "📊 Métriques de la Matrice Circulaire :",
@@ -317,7 +322,7 @@ translations = {
         "download_pdf": "📥 Télécharger le Rapport PDF Officiel",
         "tracker_header": "📈 Progression du Traitement Cloud",
         "tracker_info": "Analyse des tendances de vos scans médicaux enregistrés :",
-        "inci_header": "🔍 Analyseur Professionnel de Shampooing INCI",
+        "inci_header": "🔍 Analyseur Professionnel de Shampooing",
         "inci_desc": "Prenez en photo l'étiquette de votre shampooing.",
         "inci_cam_label": "Photographier l'étiquette",
         "inci_btn": "Analyser la Formule",
@@ -328,6 +333,7 @@ translations = {
         "tab1": "📸 Computer Vision Scan",
         "tab2": "📈 Grafischer Erholungstraker",
         "tab3": "🧪 INCI-Analyse",
+        "tab4": "🤖 KI-Dermatologen-Assistent",
         "cam_header": "📋 Erweiterte CNN & OpenCV Matrix-Analyse",
         "cam_info": "💡 **Anwendung:** Machen Sie ein klares Nahaufnahmefoto Ihrer Kopfhaut.",
         "take_photo": "Kopfhaut-Foto aufnehmen",
@@ -342,7 +348,7 @@ translations = {
         "download_pdf": "📥 Offiziellen Klinischen PDF-Bericht Herunterladen",
         "tracker_header": "📈 Cloud-basierter Behandlungsfortschritt",
         "tracker_info": "Grafische Trendanalyse Ihrer gespeicherten Scans:",
-        "inci_header": "🔍 Professioneller INCI Shampoo-Analysator",
+        "inci_header": "🔍 Professioneller Shampoo-Analysator",
         "inci_desc": "Etikett des Shampoos fotografieren.",
         "inci_cam_label": "Shampoo-Etikett fotografieren",
         "inci_btn": "Formel Tiefenanalysieren",
@@ -353,6 +359,7 @@ translations = {
         "tab1": "📸 Escaneo de Visión Artificial",
         "tab2": "📈 Seguimiento Gráfico de Recuperación",
         "tab3": "🧪 Análisis INCI",
+        "tab4": "🤖 Asistente Dermatólogo IA",
         "cam_header": "📋 Análisis Avanzado CNN y OpenCV",
         "cam_info": "💡 **Cómo usar:** Tome una foto clara de su cuero cabelludo.",
         "take_photo": "Tomar foto del cuero cabelludo",
@@ -367,7 +374,7 @@ translations = {
         "download_pdf": "📥 Descargar Informe Clínico PDF Oficial",
         "tracker_header": "📈 Progreso de Tratamiento en la Nube",
         "tracker_info": "Análisis de tendencias de sus escaneos guardados:",
-        "inci_header": "🔍 Analizador Profesional de Champú INCI",
+        "inci_header": "🔍 Analizador Profesional de Champú",
         "inci_desc": "Fotografíe la etiqueta de su champú.",
         "inci_cam_label": "Fotografiar etiqueta de champú",
         "inci_btn": "Analizar Fórmula Profundamente",
@@ -378,6 +385,7 @@ translations = {
         "tab1": "📸 Varredura de Visão Computacional",
         "tab2": "📈 Rastreador Gráfico de Recuperação",
         "tab3": "🧪 Análise INCI",
+        "tab4": "🤖 Assistente Dermatologista IA",
         "cam_header": "📋 Análise Avançada CNN e OpenCV",
         "cam_info": "💡 **Como usar:** Tire uma foto nítida do seu couro cabeludo.",
         "take_photo": "Tirar foto do couro cabeludo",
@@ -392,7 +400,7 @@ translations = {
         "download_pdf": "📥 Baixar Relatório Clínico PDF Oficial",
         "tracker_header": "📈 Progresso do Tratamento na Nuvem",
         "tracker_info": "Análise de tendência dos seus exames salvos:",
-        "inci_header": "🔍 Analisador Profissional de Shampoo INCI",
+        "inci_header": "🔍 Analisador Profissional de Shampoo",
         "inci_desc": "Fotografe o rótulo do seu shampoo.",
         "inci_cam_label": "Fotografar rótulo do shampoo",
         "inci_btn": "Analisar Fórmula Profundamente",
@@ -403,6 +411,7 @@ translations = {
         "tab1": "📸 Сканирование Компьютерным Зрением",
         "tab2": "📈 График Динамики Восстановления",
         "tab3": "🧪 INCI Анализ",
+        "tab4": "🤖 AI Дерматолог-Ассистент",
         "cam_header": "📋 Продвинутый Анализ CNN и OpenCV",
         "cam_info": "💡 **Как использовать:** Сделайте четкий снимок кожи головы.",
         "take_photo": "Сделать фото кожи головы",
@@ -417,7 +426,7 @@ translations = {
         "download_pdf": "📥 Скачать Официальный PDF Отчет",
         "tracker_header": "📈 Облачный Прогресс Лечения",
         "tracker_info": "Графический анализ сохраненных сканирований:",
-        "inci_header": "🔍 Профессиональный Анализатор Шампуней INCI",
+        "inci_header": "🔍 Профессиональный Анализатор Шампуней",
         "inci_desc": "Сфотографируйте этикетку шампуня.",
         "inci_cam_label": "Сфотографировать этикетку",
         "inci_btn": "Глубокий Анализ Формулы",
@@ -428,8 +437,9 @@ translations = {
         "tab1": "📸 فحص الرؤية الحاسوبية",
         "tab2": "📈 متتبع التعافي البياني",
         "tab3": "🧪 تحليل المكونات INCI",
+        "tab4": "🤖 مساعد طبيب الجلدية الذكي",
         "cam_header": "📋 تحليل مصفوفة CNN و OpenCV المتقدم",
-        "cam_info": "💡 **كيفية الاستخدام؟**\n1. التقط صورة مقربة واضحة لفروة الرأس.\n2. ستقوم خوارزميات الذكاء الاصطناعي بتحليل المؤشرات بدقة.",
+        "cam_info": "💡 **كيفية الاستخدام؟**\n1. التقط صورة مقربة واضحة لفروة الرأس.",
         "take_photo": "التقط صورة لفروة الرأس",
         "analyzing": "⚡ جاري معالجة مصفوفة الذكاء الاصطناعي والصور...",
         "metrics_header": "📊 مقاييس مصفوفة الرؤية الدائرية:",
@@ -442,7 +452,7 @@ translations = {
         "download_pdf": "📥 تحميل التقرير السريري الرسمي PDF",
         "tracker_header": "📈 تقدم العلاج السحابي",
         "tracker_info": "تحليل الاتجاه البياني لفحوصاتك الطبية المحفوظة:",
-        "inci_header": "🔍 محلل الشامبو الاحترافي INCI",
+        "inci_header": "🔍 محلل الشامبو الاحترافي",
         "inci_desc": "التقط صورة لملصق الشامبو أو أدخل النص أدناه.",
         "inci_cam_label": "تصوير ملصق الشامبو",
         "inci_btn": "تحليل عميق للتركيبة",
@@ -453,8 +463,9 @@ translations = {
         "tab1": "📸 Pemindaian Computer Vision",
         "tab2": "📈 Pelacak Pemulihan Grafis",
         "tab3": "🧪 Analisis INCI",
+        "tab4": "🤖 Asisten Dermatologis AI",
         "cam_header": "📋 Analisis Matriks CNN & OpenCV Tingkat Lanjut",
-        "cam_info": "💡 **Cara Penggunaan?**\n1. Ambil foto close-up kulit kepala Anda yang jelas.\n2. Pipa OpenCV & model AI CNN akan memproses indeks.",
+        "cam_info": "💡 **Cara Penggunaan?**\n1. Ambil foto close-up kulit kepala Anda yang jelas.",
         "take_photo": "Ambil Foto Kulit Kepala",
         "analyzing": "⚡ Pemotongan OpenCV & pemrosesan matriks AI CNN...",
         "metrics_header": "📊 Metrik Matriks Visi Melingkar:",
@@ -467,7 +478,7 @@ translations = {
         "download_pdf": "📥 Unduh Laporan PDF Klinis Resmi",
         "tracker_header": "📈 Perkembangan Perawatan Berbasis Cloud",
         "tracker_info": "Analisis tren grafis dari pemindaian medis cloud Anda yang disimpan:",
-        "inci_header": "🔍 Analis Shampo INCI Profesional",
+        "inci_header": "🔍 Analis Shampo Profesional",
         "inci_desc": "Ambil foto label shampo Anda ATAU tempel teks di bawah.",
         "inci_cam_label": "Ambil Foto Label Shampo",
         "inci_btn": "Analisis Formula Mendalam",
@@ -478,8 +489,9 @@ translations = {
         "tab1": "📸 สแกนคอมพิวเตอร์วิทัศน์",
         "tab2": "📈 ตัวติดตามการฟื้นตัวแบบกราฟิก",
         "tab3": "🧪 วิเคราะห์ INCI",
+        "tab4": "🤖 ผู้ช่วยแพทย์ผิวหนัง AI",
         "cam_header": "📋 การวิเคราะห์เมทริกซ์ CNN & OpenCV ขั้นสูง",
-        "cam_info": "💡 **วิธีใช้งาน?**\n1. ถ่ายภาพหนังศีรษะระยะใกล้ที่ชัดเจน\n2. ระบบจะประมวลผลดัชนีความผิดปกติผ่านโมเดล AI",
+        "cam_info": "💡 **วิธีใช้งาน?**\n1. ถ่ายภาพหนังศีรษะระยะใกล้ที่ชัดเจน",
         "take_photo": "ถ่ายภาพหนังศีรษะของคุณ",
         "analyzing": "⚡ กำลังประมวลผลเมทริกซ์ AI และ OpenCV...",
         "metrics_header": "📊 ตัวชี้วัดเมทริกซ์วงกลม:",
@@ -492,7 +504,7 @@ translations = {
         "download_pdf": "📥 ดาวน์โหลดรายงาน PDF ทางคลินิกอย่างเป็นทางการ",
         "tracker_header": "📈 ความก้าวหน้าการรักษาบนคลาวด์",
         "tracker_info": "กราฟแนวโน้มการเปลี่ยนแปลงจากการสแกนครั้งก่อนๆ:",
-        "inci_header": "🔍 เครื่องมือวิเคราะห์แชมพู INCI มืออาชีพ",
+        "inci_header": "🔍 เครื่องมือวิเคราะห์แชมพูมืออาชีพ",
         "inci_desc": "ถ่ายภาพฉลากส่วนผสมแชมพูของคุณ หรือพิมพ์ข้อความลงด้านล่าง",
         "inci_cam_label": "ถ่ายภาพฉลากแชมพู",
         "inci_btn": "วิเคราะห์สูตรเชิงลึก",
@@ -503,6 +515,7 @@ translations = {
         "tab1": "📸 कंप्यूटर विज़न स्कैन",
         "tab2": "📈 ग्राफिकल रिकवरी ट्रैकर",
         "tab3": "🧪 INCI विश्लेषण",
+        "tab4": "🤖 एआई त्वचा विशेषज्ञ सहायक",
         "cam_header": "📋 उन्नत सीवी पिक्सेल और बनावट विश्लेषण",
         "cam_info": "💡 **कैसे उपयोग करें?** अपनी खोपड़ी की तस्वीर लें।",
         "take_photo": "अपनी खोपड़ी की तस्वीर लें",
@@ -517,7 +530,7 @@ translations = {
         "download_pdf": "📥 आधिकारिक पीडीएफ रिपोर्ट डाउनलोड करें",
         "tracker_header": "📈 व्यक्तिगत प्रोफ़ाइल उपचार प्रगति",
         "tracker_info": "आपकी सहेजी गई स्कैन की ग्राफिकल प्रवृत्ति:",
-        "inci_header": "🔍 पेशेवर INCI विश्लेषक",
+        "inci_header": "🔍 पेशेवर शैम्पू विश्लेषक",
         "inci_desc": "अपने शैम्पू के लेबल की तस्वीर लें।",
         "inci_cam_label": "शम्पू लेबल की फोटो लें",
         "inci_btn": "विश्लेषण करें",
@@ -528,6 +541,7 @@ translations = {
         "tab1": "📸 计算机视觉扫描",
         "tab2": "📈 图表恢复追踪",
         "tab3": "🧪 INCI 成分分析",
+        "tab4": "🤖 AI 皮肤科医生助手",
         "cam_header": "📋 高级 CV 像素与纹理分析",
         "cam_info": "💡 **使用说明：** 拍摄头皮特写照片进行分析。",
         "take_photo": "拍摄头皮照片",
@@ -542,7 +556,7 @@ translations = {
         "download_pdf": "📥 下载官方临床 PDF 报告",
         "tracker_header": "📈 个人档案治疗进展",
         "tracker_info": "您保存的医疗扫描的图形趋势分析：",
-        "inci_header": "🔍 专业洗发水 INCI 分析仪",
+        "inci_header": "🔍 专业洗发水分析仪",
         "inci_desc": "拍摄洗发水成分标签照片。",
         "inci_cam_label": "拍摄洗发水标签",
         "inci_btn": "深度分析配方",
@@ -630,9 +644,11 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-tab1, tab2, tab3 = st.tabs([t["tab1"], t["tab2"], t["tab3"]])
+tab1, tab2, tab3, tab4 = st.tabs([t["tab1"], t["tab2"], t["tab3"], t["tab4"]])
 
-user_history = st.session_state.users[st.session_state.logged_in_user]["history"]
+user_data = st.session_state.users[st.session_state.logged_in_user]
+user_history = user_data["history"]
+chat_messages = user_data["chat_messages"]
 
 with tab1:
     st.subheader(t["cam_header"])
@@ -652,7 +668,6 @@ with tab1:
             
             st.markdown(f"### {t['metrics_header']}")
             
-            # --- SVG DAİRESEL GÖSTERGE HESAPLAMALARI ---
             redness_pct = int((redness_score / 10.0) * 100)
             sebum_pct = int(sebum_index * 100)
             
@@ -736,7 +751,6 @@ with tab3:
                 
                 col_a, col_b = st.columns(2)
                 
-                # INCI sekmesinde dairesel estetik uyum göstergesi
                 col_a.markdown(f"""
                 <div class="circle-container">
                     <svg viewBox="0 0 36 36" class="circular-chart">
@@ -764,6 +778,60 @@ with tab3:
                 st.markdown("- **Sodium Laureth Sulfate (SLES):** Temizleyici bazdır ancak hassas kafa derilerinde hafif kuruluk yapabilir. ⚠️")
                 st.markdown("- **Panthenol & Glycerin:** Kafa derisini yatıştırır ve nem dengesini korur. ✅")
                 
-                st.info("💡 **Uzman Tavsiyesi:** Bu formül kafa derisindeki sebum dengesini korumاست için uygundur ancak haftada 2-3 defadan fazla kullanılmamalıdır.")
+                st.info("💡 **Uzman Tavsiyesi:** Bu formül kafa derisindeki sebum dengesini korumak için uygundur ancak haftada 2-3 defadan fazla kullanılmamalıdır.")
         else: 
             st.warning("Lütfen şampuan etiketinin fotoğrafını çekin ya da metin kutusuna içerikleri girin.")
+
+with tab4:
+    st.subheader("🤖 ScalpAI Klinik Dermatolog Asistanı (RAG & Akıllı Yönlendirme)")
+    st.info("💡 Bu asistan; **en son tarama sonuçlarınızı, kızarıklık ve sebum indekslerinizi** otomatik okuyarak size özel tıbbi yorum yapar ve sonraki adımlarınız için yönlendirir.")
+    
+    # Sohbet Geçmişini Ekrana Bas
+    for message in chat_messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+            
+    # Kullanıcıdan Girdi Al
+    user_query = st.chat_input("Kafa deriniz veya tedavinize dair bir soru sorun (Örn: 'Kızarıklığım neden geçmiyor?', 'Şampuanı nasıl kullanmalıyım?')")
+    
+    if user_query:
+        # Kullanıcı mesajını kaydet ve göster
+        chat_messages.append({"role": "user", "content": user_query})
+        with st.chat_message("user"):
+            st.markdown(user_query)
+            
+        with st.chat_message("assistant"):
+            with st.spinner("Klinik asistan verilerinizi inceliyor ve yönlendiriyor..."):
+                # Son tarama verisini çek
+                if len(user_history) > 0:
+                    last_scan = user_history[-1]
+                    r_score = last_scan["redness"]
+                    s_score = last_scan["sebum"]
+                    cond = last_scan["condition"]
+                    
+                    context_str = f"Kullanıcının en son tarama verileri -> Teşhis: {cond}, Kızarıklık İndeksi: {r_score:.1f}/10, Sebum Yağlanma: %{int(s_score)}."
+                else:
+                    context_str = "Kullanıcının henüz kayıtlı tarama verisi bulunmuyor."
+                
+                # Akıllı Yönlendirmeli RAG Yanıt Motoru
+                response_text = f"🔍 **Klinik Veri Analizi:** {context_str}\n\n"
+                
+                query_lower = user_query.lower()
+                if "kızarıklık" in query_lower or "redness" in query_lower or "kaşıntı" in query_lower:
+                    if len(user_history) > 0 and user_history[-1]["redness"] > 6.0:
+                        response_text += f"⚠️ **Yönlendirme Uyarısı:** Son taramanızda kızarıklık indeksiniz oldukça yüksek ({r_score:.1f}/10) çıkmış. Seboreik aktivite veya tahriş riski bulunuyor.\n"
+                        response_text += "👉 **Tıbbi Öneri:** Lütfen reçete edilen antifungal (Ketoconazole) şampuanı haftada 3 kez köpürtüp 5 dakika kafa derisinde beklettikten sonra durulayın. Sıcak su kullanımından kaçının."
+                    else:
+                        response_text += "✅ Kızarıklık seviyeniz güvenli aralıkta görünüyor. Hafif karıncalanmalar için ılık suyla durulama yapabilirsiniz."
+                elif "yağ" in query_lower or "sebum" in query_lower or "kepek" in query_lower:
+                    if len(user_history) > 0 and user_history[-1]["sebum"] > 50:
+                        response_text += f"📌 **Yönlendirme Uyarısı:** Sebum oranınız %{int(s_score)} seviyesinde (Yağlı kepek/pullanma eğilimi).\n"
+                        response_text += "👉 **Tıbbi Öneri:** Salisilik asit veya Piroctone Olamine içeren arındırıcı ürünlere yönelmeniz kafa derisindeki tıkanıklığı çözecektir."
+                    else:
+                        response_text += "📌 Sebum dengeniz normal seviyelerde seyrediyor. Rutin nemlendirici bakımınıza devam edebilirsiniz."
+                else:
+                    response_text += f"🩺 **Asistan Yönlendirmesi:** Sorunuza istinaden; mevcut durumunuz (`{cond if len(user_history)>0 else 'Genel Bakım'}`) göz önüne alındığında düzenli tarama takibini sürdürmeniz önerilir.\n\n"
+                    response_text += "💡 *Daha spesifik yönlendirme alabilmek için lütfen 'Bilgisayarlı Görü Tarama' sekmesinden güncel bir kafa derisi fotoğrafı taratın.*"
+                
+                st.markdown(response_text)
+                chat_messages.append({"role": "assistant", "content": response_text})
