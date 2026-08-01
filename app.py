@@ -13,14 +13,17 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- MODERN KOYU TEMA VE CANLI UI ÖZEL CSS ---
+# --- MODERN APPLE TARZI & KÜBİK KARTLI ÖZEL CSS ---
 st.markdown("""
 <style>
+    /* Genel Arka Plan ve Yazı Tipi */
     .stApp {
         background-color: #0f172a !important;
         color: #f8fafc !important;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
+    
+    /* Yan Menü Tasarımı */
     section[data-testid="stSidebar"] {
         background-color: #1e293b !important;
         color: #f8fafc !important;
@@ -28,6 +31,8 @@ st.markdown("""
     section[data-testid="stSidebar"] .stMarkdown, section[data-testid="stSidebar"] label {
         color: #f8fafc !important;
     }
+    
+    /* Ana Başlık Gradyanı */
     .main-title {
         background: linear-gradient(90deg, #38bdf8 0%, #2dd4bf 100%);
         -webkit-background-clip: text;
@@ -35,53 +40,71 @@ st.markdown("""
         font-weight: 800;
         font-size: 2.2rem;
         margin-bottom: 0rem;
+        letter-spacing: -0.5px;
     }
+
+    /* Kübik Sekme (Tab) Yapıları */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
         background-color: #1e293b;
         padding: 10px;
         border-radius: 16px;
-        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.05);
     }
     .stTabs [data-baseweb="tab"] {
         height: 48px;
         background-color: transparent;
-        border-radius: 10px;
+        border-radius: 12px;
         font-weight: 600;
         color: #94a3b8;
         padding: 0 20px;
+        transition: all 0.3s ease;
     }
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #0284c7 0%, #0d9488 100%) !important;
         color: white !important;
         box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
     }
+
+    /* Apple Tarzı Kübik Butonlar */
     div.stButton > button {
         background: linear-gradient(135deg, #0284c7 0%, #0d9488 100%);
         color: white;
         font-weight: 600;
         border: none;
-        border-radius: 12px;
+        border-radius: 14px;
         padding: 0.6rem 1.5rem;
         box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
         transition: all 0.3s ease;
+        width: 100%;
     }
     div.stButton > button:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(13, 148, 136, 0.6);
     }
+
+    /* Kübik Metrik Kutuları */
     div[data-testid="metric-container"] {
         background: #1e293b !important;
-        border: 1px solid #334155;
-        padding: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 18px;
         border-radius: 16px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
     div[data-testid="metric-container"] label {
         color: #94a3b8 !important;
     }
     div[data-testid="metric-container"] [data-testid="stMetricValue"] {
         color: #38bdf8 !important;
+    }
+
+    /* Bilgi ve Uyarı Kutuları (Kübik) */
+    .stAlert, [data-testid="stFileUploader"] {
+        border-radius: 16px !important;
+        background-color: #1e293b !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -106,7 +129,7 @@ st.markdown("""
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js')
-            .then(reg => console.log('Service Workerregistered!', reg))
+            .then(reg => console.log('Service Worker registered!', reg))
             .catch(err => console.log('Service Worker registration failed:', err));
         });
       }
@@ -384,5 +407,5 @@ with tab3:
                 st.markdown("- **Panthenol & Glycerin:** Kafa derisini yatıştırır ve nem dengesini korur. ✅")
                 
                 st.info("💡 **Uzman Tavsiyesi:** Bu formül kafa derisindeki sebum dengesini korumak için uygundur ancak haftada 2-3 defadan fazla kullanılmamalıdır.")
-        else:
+        else: 
             st.warning("Lütfen şampuan etiketinin fotoğrafını çekin ya da metin kutusuna içerikleri girin.")
