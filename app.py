@@ -3,8 +3,6 @@ import numpy as np
 import pandas as pd
 from PIL import Image, ImageOps, ImageFilter
 import io
-import hashlib
-import re
 from sklearn.ensemble import RandomForestClassifier
 
 # --- APPLE HIG SEVİYESİ KURUMSAL SAYFA YAPILANDIRMASI ---
@@ -165,6 +163,13 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
+# --- OTURUM HAFIZA YÖNETİMİ ---
+if "history" not in st.session_state:
+    st.session_state.history = []
+if "chat_messages" not in st.session_state:
+    st.session_state.chat_messages = []
+
 # --- 12 DİLLİ ULUSLARARASI KAPSAMLI SÖZLÜK ---
 translations = {
     "Türkçe": {
@@ -186,8 +191,8 @@ translations = {
         "severity": "Klinik Şiddet Derecesi",
         "prescription": "💊 Uzman Hedefli Tedavi Reçetesi:",
         "download_pdf": "📥 Resmi Klinik PDF Raporunu İndir",
-        "tracker_header": "📈 Bulut Tabanlı Tedavi İlerleme Eğrisi",
-        "tracker_info": "Bulut hesabınıza kayıtlı geçmiş taramalarınızın grafiksel değişim tablosu:",
+        "tracker_header": "📈 Tedavi İlerleme Eğrisi",
+        "tracker_info": "Oturumunuza kayıtlı geçmiş taramalarınızın grafiksel değişim tablosu:",
         "inci_header": "🔍 Profesyonel Şampuan Analizcisi",
         "inci_desc": "Şampuan etiketinin fotoğrafını çekin VEYA içerik metnini doğrudan girin.",
         "inci_cam_label": "Şampuan Etiketini Kameraya Çekin",
@@ -212,8 +217,8 @@ translations = {
         "severity": "Clinical Severity Level",
         "prescription": "💊 Targeted Treatment Prescription:",
         "download_pdf": "📥 Download Official Clinical PDF Report",
-        "tracker_header": "📈 Cloud-Based Treatment Progress",
-        "tracker_info": "Graphical trend analysis of your saved cloud medical scans:",
+        "tracker_header": "📈 Treatment Progress Tracker",
+        "tracker_info": "Graphical trend analysis of your saved medical scans:",
         "inci_header": "🔍 Professional Shampoo Analyzer",
         "inci_desc": "Take a photo of your shampoo label OR paste the text below.",
         "inci_cam_label": "Take a photo of Shampoo Label",
@@ -238,7 +243,7 @@ translations = {
         "severity": "Niveau de Sévérité Clinique",
         "prescription": "💊 Prescription de Traitement Ciblée :",
         "download_pdf": "📥 Télécharger le Rapport PDF Officiel",
-        "tracker_header": "📈 Progression du Traitement Cloud",
+        "tracker_header": "📈 Progression du Traitement",
         "tracker_info": "Analyse des tendances de vos scans médicaux enregistrés :",
         "inci_header": "🔍 Analyseur Professionnel de Shampooing",
         "inci_desc": "Prenez en photo l'étiquette de votre shampooing.",
@@ -264,7 +269,7 @@ translations = {
         "severity": "Klinischer Schweregrad",
         "prescription": "💊 Gezieltes Behandlungsrezept:",
         "download_pdf": "📥 Offiziellen Klinischen PDF-Bericht Herunterladen",
-        "tracker_header": "📈 Cloud-basierter Behandlungsfortschritt",
+        "tracker_header": "📈 Behandlungsfortschritt",
         "tracker_info": "Grafische Trendanalyse Ihrer gespeicherten Scans:",
         "inci_header": "🔍 Professioneller Shampoo-Analysator",
         "inci_desc": "Etikett des Shampoos fotografieren.",
@@ -290,7 +295,7 @@ translations = {
         "severity": "Nivel de Severidad Clínica",
         "prescription": "💊 Prescripción de Tratamiento Dirigido:",
         "download_pdf": "📥 Descargar Informe Clínico PDF Oficial",
-        "tracker_header": "📈 Progreso de Tratamiento en la Nube",
+        "tracker_header": "📈 Progreso del Tratamiento",
         "tracker_info": "Análisis de tendencias de sus escaneos guardados:",
         "inci_header": "🔍 Analizador Profesional de Champú",
         "inci_desc": "Fotografíe la etiqueta de su champú.",
@@ -316,7 +321,7 @@ translations = {
         "severity": "Nível de Gravidade Clínica",
         "prescription": "💊 Prescrição de Tratamento Alvo:",
         "download_pdf": "📥 Baixar Relatório Clínico PDF Oficial",
-        "tracker_header": "📈 Progresso do Tratamento na Nuvem",
+        "tracker_header": "📈 Progresso do Tratamento",
         "tracker_info": "Análise de tendência dos seus exames salvos:",
         "inci_header": "🔍 Analisador Profissional de Shampoo",
         "inci_desc": "Fotografe o rótulo do seu shampoo.",
@@ -342,7 +347,7 @@ translations = {
         "severity": "Клинический Уровень Тяжести",
         "prescription": "💊 Целевой Рецепт Лечения:",
         "download_pdf": "📥 Скачать Официальный PDF Отчет",
-        "tracker_header": "📈 Облачный Прогресс Лечения",
+        "tracker_header": "📈 Прогресс Лечения",
         "tracker_info": "Графический анализ сохраненных сканирований:",
         "inci_header": "🔍 Профессиональный Анализатор Шампуней",
         "inci_desc": "Сфотографируйте этикетку шампуня.",
@@ -368,7 +373,7 @@ translations = {
         "severity": "درجة الخطورة السريرية",
         "prescription": "💊 وصفة العلاج المخصصة:",
         "download_pdf": "📥 تحميل التقرير السريري الرسمي PDF",
-        "tracker_header": "📈 تقدم العلاج السحابي",
+        "tracker_header": "📈 تقدم العلاج",
         "tracker_info": "تحليل الاتجاه البياني لفحوصاتك الطبية المحفوظة:",
         "inci_header": "🔍 محلل الشامبو الاحترافي",
         "inci_desc": "التقط صورة لملصق الشامبو أو أدخل النص أدناه.",
@@ -394,8 +399,8 @@ translations = {
         "severity": "Tingkat Keparahan Klinis",
         "prescription": "💊 Resep Perawatan Target:",
         "download_pdf": "📥 Unduh Laporan PDF Klinis Resmi",
-        "tracker_header": "📈 Perkembangan Perawatan Berbasis Cloud",
-        "tracker_info": "Analisis tren grafis dari pemindaian medis cloud Anda yang disimpan:",
+        "tracker_header": "📈 Perkembangan Perawatan",
+        "tracker_info": "Analisis tren grafis dari pemindaian medis Anda yang disimpan:",
         "inci_header": "🔍 Analis Shampo Profesional",
         "inci_desc": "Ambil foto label shampo Anda ATAU tempel teks di bawah.",
         "inci_cam_label": "Ambil Foto Label Shampo",
@@ -420,7 +425,7 @@ translations = {
         "severity": "ระดับความรุนแรงทางคลินิก",
         "prescription": "💊 ใบสั่งยาการรักษาเป้าหมาย:",
         "download_pdf": "📥 ดาวน์โหลดรายงาน PDF ทางคลินิกอย่างเป็นทางการ",
-        "tracker_header": "📈 ความก้าวหน้าการรักษาบนคลาวด์",
+        "tracker_header": "📈 ความก้าวหน้าการรักษา",
         "tracker_info": "กราฟแนวโน้มการเปลี่ยนแปลงจากการสแกนครั้งก่อนๆ:",
         "inci_header": "🔍 เครื่องมือวิเคราะห์แชมพูมืออาชีพ",
         "inci_desc": "ถ่ายภาพฉลากส่วนผสมแชมพูของคุณ หรือพิมพ์ข้อความลงด้านล่าง",
@@ -446,7 +451,7 @@ translations = {
         "severity": "गंभीरता स्तर",
         "prescription": "💊 लक्षित उपचार नुस्खा:",
         "download_pdf": "📥 आधिकारिक पीडीएफ रिपोर्ट डाउनलोड करें",
-        "tracker_header": "📈 व्यक्तिगत प्रोफ़ाइल उपचार प्रगति",
+        "tracker_header": "📈 उपचार प्रगति",
         "tracker_info": "आपकी सहेजी गई स्कैन की ग्राफिकल प्रवृत्ति:",
         "inci_header": "🔍 पेशेवर शैम्पू विश्लेषक",
         "inci_desc": "अपने शैम्पू के लेबल की तस्वीर लें।",
@@ -472,7 +477,7 @@ translations = {
         "severity": "临床严重程度",
         "prescription": "💊 目标治疗处方：",
         "download_pdf": "📥 下载官方临床 PDF 报告",
-        "tracker_header": "📈 个人档案治疗进展",
+        "tracker_header": "📈 治疗进展追踪",
         "tracker_info": "您保存的医疗扫描的图形趋势分析：",
         "inci_header": "🔍 专业洗发水分析仪",
         "inci_desc": "拍摄洗发水成分标签照片。",
@@ -485,6 +490,9 @@ translations = {
 st.sidebar.markdown("### 🌐 Dil / Language / اللغة")
 selected_lang = st.sidebar.selectbox("Select Language", list(translations.keys()), label_visibility="collapsed")
 t = translations[selected_lang]
+
+st.sidebar.divider()
+st.sidebar.info("💡 **ScalpAI® Enterprise:** Yapay zeka destekli akıllı klinik ve optik görüntüleme sistemi aktif.")
 
 # --- EN ÜST SEVİYE CNN / RANDOM FOREST YAPAY ZEKA MODELİ ---
 @st.cache_resource
@@ -545,7 +553,7 @@ def generate_pdf_report(condition, redness, sebum, prescription):
     
     buffer = io.BytesIO()
     c = canvas.Canvas(buffer, pagesize=letter)
-    c.drawString(50, 750, f"SCALPAI CLINICAL REPORT - CLOUD USER: {st.session_state.logged_in_user}")
+    c.drawString(50, 750, "SCALPAI CLINICAL REPORT")
     c.drawString(50, 720, f"Condition: {condition}")
     c.drawString(50, 700, f"CV Erythema Index: {redness:.1f} / 10.0")
     c.drawString(50, 680, f"Sebum Index: %{int(sebum * 100)}")
@@ -564,9 +572,8 @@ st.markdown(f"""
 
 tab1, tab2, tab3, tab4 = st.tabs([t["tab1"], t["tab2"], t["tab3"], t["tab4"]])
 
-user_data = st.session_state.users[st.session_state.logged_in_user]
-user_history = user_data["history"]
-chat_messages = user_data["chat_messages"]
+user_history = st.session_state.history
+chat_messages = st.session_state.chat_messages
 
 with tab1:
     st.subheader(t["cam_header"])
@@ -625,7 +632,7 @@ with tab1:
             st.download_button(
                 label=t["download_pdf"],
                 data=pdf_bytes,
-                file_name=f"ScalpAI_Cloud_Report_{st.session_state.logged_in_user.split('@')[0]}.pdf",
+                file_name="ScalpAI_Clinical_Report.pdf",
                 mime="application/pdf"
             )
 
@@ -639,7 +646,7 @@ with tab2:
         
         st.line_chart(df_history[["redness", "sebum"]])
         
-        st.markdown("### 📋 Bulut Geçmiş Tarama Kayıtları")
+        st.markdown("### 📋 Geçmiş Tarama Kayıtları")
         for i, h in enumerate(user_history):
             st.markdown(f"**Tarama #{i+1}** -> Durum: `{h['condition']}` | Kızarıklık: `{h['redness']:.1f}` | Yağlanma: `%{int(h['sebum'])}`")
         
@@ -650,7 +657,7 @@ with tab2:
             else:
                 st.warning("⚠️ Kızarıklık seviyenizde artış gözlendi, lütfen önerilen etken maddelere dikkat edin.")
     else:
-        st.info("Bulut profilinizde henüz kayıtlı analiz bulunmuyor. 'Bilgisayarlı Görü Tarama' sekmesinden ilk taramanızı gerçekleştirebilirsiniz.")
+        st.info("Henüz kayıtlı analiz bulunmuyor. 'Bilgisayarlı Görü Tarama' sekmesinden ilk taramanızı gerçekleştirebilirsiniz.")
 
 with tab3:
     st.subheader(t["inci_header"])
@@ -704,23 +711,19 @@ with tab4:
     st.subheader("🤖 ScalpAI Klinik Dermatolog Asistanı (RAG & Akıllı Yönlendirme)")
     st.info("💡 Bu asistan; **en son tarama sonuçlarınızı, kızarıklık ve sebum indekslerinizi** otomatik okuyarak size özel tıbbi yorum yapar ve sonraki adımlarınız için yönlendirir.")
     
-    # Sohbet Geçmişini Ekrana Bas
     for message in chat_messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
             
-    # Kullanıcıdan Girdi Al
     user_query = st.chat_input("Kafa deriniz veya tedavinize dair bir soru sorun (Örn: 'Kızarıklığım neden geçmiyor?', 'Şampuanı nasıl kullanmalıyım?')")
     
     if user_query:
-        # Kullanıcı mesajını kaydet ve göster
         chat_messages.append({"role": "user", "content": user_query})
         with st.chat_message("user"):
             st.markdown(user_query)
             
         with st.chat_message("assistant"):
             with st.spinner("Klinik asistan verilerinizi inceliyor ve yönlendiriyor..."):
-                # Son tarama verisini çek
                 if len(user_history) > 0:
                     last_scan = user_history[-1]
                     r_score = last_scan["redness"]
@@ -731,7 +734,6 @@ with tab4:
                 else:
                     context_str = "Kullanıcının henüz kayıtlı tarama verisi bulunmuyor."
                 
-                # Akıllı Yönlendirmeli RAG Yanıt Motoru
                 response_text = f"🔍 **Klinik Veri Analizi:** {context_str}\n\n"
                 
                 query_lower = user_query.lower()
